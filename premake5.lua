@@ -32,18 +32,17 @@ project "Lettermorph"
 
 	sysincludedirs
 	{
-		"thirdparty/SDL2/include"
+		"thirdparty/SDL3/include"
 	}
 	
 	libdirs
 	{
-		"thirdparty/SDL2/lib/%{cfg.system}/%{cfg.shortname}"
+		"thirdparty/SDL3/lib/%{cfg.system}/%{cfg.shortname}"
 	}
 
 	links
 	{
-		"SDL2"
-
+		"SDL3"
 	}
 
 	filter "configurations:Debug"

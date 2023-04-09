@@ -1,6 +1,8 @@
-#include <iostream>
+#include "game.h"
 
 int main()
 {
-  std::cout << "Hello, World!" << std::endl;;
+  ltrm::Game* game = new ltrm::Game();
+  game->Run();
+  delete game;
 }
