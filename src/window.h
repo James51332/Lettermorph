@@ -24,7 +24,10 @@ public:
   ~Window();
   
   void PollEvents();
+  void SwapBuffers();
+  
   const WindowDesc& GetDesc() const { return m_Desc; }
+  SDL_Window* GetHandle() { return m_Handle; }
   
 private:
   WindowDesc m_Desc;

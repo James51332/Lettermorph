@@ -1,4 +1,7 @@
 #include "game.h"
+#include "renderer.h"
+
+#include <SDL3/SDL_image.h>
 
 namespace ltrm
 {
@@ -37,12 +40,21 @@ void Game::Run()
   desc.resizeable = true;
   m_Window = new Window(desc);
   
+  if ( TTF_Init() < 0 ) {
+    SDL_Log("Error initializing SDL_ttf: %s", TTF_GetError());
+  }
+  
   // Game loop
   while (m_Running)
   {
     m_Window->PollEvents();
     
-    SDL_Delay(100);
+    Renderer::Clear({0xcc, 0xcc, 0xcc, 0xff});
+    
+    Renderer::Fill({100, 100, 0, 255});
+    Renderer::Rect(100, 200, 200, 300);
+    
+    m_Window->SwapBuffers();
   }
   
   // Deinitialize
@@ -54,6 +66,11 @@ void Game::Run()
 void Game::Stop()
 {
   m_Running = false;
+}
+
+void Game::KeyDown(SDL_Keycode key)
+{
+  SDL_Log("Key Pressed, %c", SDL_toupper(key));
 }
 
 }

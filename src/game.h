@@ -2,6 +2,8 @@
 
 #include "window.h"
 
+#include <SDL3/SDL.h>
+
 namespace ltrm
 {
 	
@@ -13,6 +15,7 @@ public:
   
   void Run();
   void Stop();
+  void KeyDown(SDL_Keycode key);
   
   static Game* GetInstance() { return s_Instance; }
   
