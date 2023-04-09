@@ -43,11 +43,13 @@ void Game::Run()
   
   // Create a window
   WindowDesc desc;
-  desc.width = 300;
-  desc.height = 500;
+  desc.width = 800;
+  desc.height = 600;
   desc.title = "Lettermorph";
   desc.resizeable = true;
   m_Window = new Window(desc);
+  
+  m_Word = new Word();
   
   // Load an image
   Texture* texture = new Texture("resources/discord-btn.png");
@@ -61,7 +63,15 @@ void Game::Run()
     
     Renderer::Fill({0, 0, 0, 255});
     Renderer::Rect(100, 200, 200, 300);
-    Renderer::Letter('F', 0, 0, 100);
+    
+    float x = 0;
+    float y = 0;
+    float size = 100;
+    for (int i = 0; i < m_Word->GetLength(); i++)
+    {
+      Renderer::Letter((*m_Word)[i], x, y, size);
+      x+=size;
+    }
     
     m_Window->SwapBuffers();
   }
@@ -69,6 +79,7 @@ void Game::Run()
   // Deinitialize
   delete texture;
   delete m_Window;
+  delete m_Word;
   
   IMG_Quit();
   SDL_Quit();
@@ -81,7 +92,10 @@ void Game::Stop()
 
 void Game::KeyDown(SDL_Keycode key)
 {
-  SDL_Log("Key Pressed, %c", SDL_toupper(key));
+  if (isalpha(key))
+  	m_Word->PushChar(key);
+  else if (key == SDLK_BACKSPACE)
+    m_Word->PopChar();
 }
 
 }

@@ -36,6 +36,12 @@ void Window::PollEvents()
         
       case SDL_EVENT_KEY_DOWN:
       {
+        if (event.key.keysym.sym == SDLK_ESCAPE)
+        {
+          Game::GetInstance()->Stop();
+          break;
+        }
+        
         Game::GetInstance()->KeyDown(event.key.keysym.sym);
       }
         

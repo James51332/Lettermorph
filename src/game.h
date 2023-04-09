@@ -1,6 +1,7 @@
 #pragma once
 
 #include "window.h"
+#include "word.h"
 
 #include <SDL3/SDL.h>
 
@@ -24,6 +25,8 @@ private:
   
   bool m_Running = false;
   Window* m_Window = nullptr;
+  
+  Word* m_Word = nullptr;
 };
 
 }
