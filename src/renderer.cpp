@@ -8,6 +8,7 @@ namespace ltrm
 
 bool Renderer::s_Initalized = false;
 SDL_Renderer* Renderer::s_Renderer = nullptr;
+Texture* Renderer::s_FontTexture = nullptr;
 
 void Renderer::Init(SDL_Window *window)
 {
@@ -16,6 +17,8 @@ void Renderer::Init(SDL_Window *window)
   
   // TODO: RenderAPIs
   s_Renderer = SDL_CreateRenderer(window, "opengl", SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  
+  s_FontTexture = new Texture("resources/letters.png");
 }
 
 void Renderer::Present()
@@ -25,6 +28,8 @@ void Renderer::Present()
 
 void Renderer::Shutdown()
 {
+  delete s_FontTexture;
+  
   SDL_DestroyRenderer(s_Renderer);
   s_Renderer = nullptr;
 }
@@ -50,6 +55,24 @@ void Renderer::Image(Texture* tex, float x, float y, float w, float h)
 {
   SDL_FRect dst = {x,y,w,h};
   SDL_RenderTexture(s_Renderer, tex->GetTexture(), tex->HasClipRect() ? &tex->GetClipRect() : nullptr, &dst);
+}
+
+void Renderer::Letter(char c, float x, float y, float h)
+{
+  SDL_FRect dstRect = {x,y,h,h};
+  
+  // Calculate source rect from character
+  constexpr int bitmapSize = 512;
+  constexpr int letterSize = 64;
+  constexpr int lettersPerRow = bitmapSize / letterSize;
+  
+  int index = ((int)SDL_toupper(c)) - 'A';
+  float clipX = static_cast<float>((index % lettersPerRow));
+  float clipY = static_cast<float>(((index - clipX) / lettersPerRow));
+  float size = static_cast<float>(letterSize);
+  SDL_FRect srcRect = { clipX * size, clipY * size, size, size};
+  
+  SDL_RenderTexture(s_Renderer, s_FontTexture->GetTexture(), &srcRect, &dstRect);
 }
 
 }

@@ -19,6 +19,7 @@ public:
   
   static void Rect(float, float, float, float);
   static void Image(Texture*, float, float, float, float);
+  static void Letter(char c, float x, float y, float h);
   
 private:
   static void Init(SDL_Window* window);
@@ -28,6 +29,7 @@ private:
 private:
   static bool s_Initalized;
   static SDL_Renderer* s_Renderer;
+  static Texture* s_FontTexture;
 };
 
 }

@@ -57,11 +57,11 @@ void Game::Run()
   {
     m_Window->PollEvents();
     
-    Renderer::Clear({0xcc, 0xcc, 0xcc, 0xff});
+    Renderer::Clear({0x10, 0x10, 0x10, 0xff});
     
-    Renderer::Fill({100, 100, 0, 255});
+    Renderer::Fill({0, 0, 0, 255});
     Renderer::Rect(100, 200, 200, 300);
-    Renderer::Image(texture, 0, 0, 200, 200);
+    Renderer::Letter('F', 0, 0, 100);
     
     m_Window->SwapBuffers();
   }
