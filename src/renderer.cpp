@@ -1,4 +1,7 @@
 #include "renderer.h"
+#include "game.h"
+
+#include <SDL3/SDL_image.h>
 
 namespace ltrm
 {
@@ -41,6 +44,12 @@ void Renderer::Rect(float x, float y, float w, float h)
 {
   SDL_FRect rect =  {x,y,w,h};
   SDL_RenderFillRect(s_Renderer, &rect);
+}
+
+void Renderer::Image(Texture* tex, float x, float y, float w, float h)
+{
+  SDL_FRect dst = {x,y,w,h};
+  SDL_RenderTexture(s_Renderer, tex->GetTexture(), tex->HasClipRect() ? &tex->GetClipRect() : nullptr, &dst);
 }
 
 }

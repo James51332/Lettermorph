@@ -1,5 +1,6 @@
 #include "game.h"
 #include "renderer.h"
+#include "texture.h"
 
 #include <SDL3/SDL_image.h>
 
@@ -25,10 +26,18 @@ void Game::Run()
   // We begin running here, because we may terminate before actual gameloop begins
   m_Running = true;
   
+  // Initailize SDL
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
   {
     SDL_Log("Failed to initialize SDL: %s", SDL_GetError());
     Stop();
+    return;
+  }
+  
+  if (!IMG_Init(IMG_INIT_PNG))
+  {
+    SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
+    Game::GetInstance()->Stop();
     return;
   }
   
@@ -40,9 +49,8 @@ void Game::Run()
   desc.resizeable = true;
   m_Window = new Window(desc);
   
-  if ( TTF_Init() < 0 ) {
-    SDL_Log("Error initializing SDL_ttf: %s", TTF_GetError());
-  }
+  // Load an image
+  Texture* texture = new Texture("resources/discord-btn.png");
   
   // Game loop
   while (m_Running)
@@ -53,13 +61,16 @@ void Game::Run()
     
     Renderer::Fill({100, 100, 0, 255});
     Renderer::Rect(100, 200, 200, 300);
+    Renderer::Image(texture, 0, 0, 200, 200);
     
     m_Window->SwapBuffers();
   }
   
   // Deinitialize
+  delete texture;
   delete m_Window;
   
+  IMG_Quit();
   SDL_Quit();
 }
 
