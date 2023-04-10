@@ -86,7 +86,7 @@ bool Dictionary::CheckWord(const char *word)
 {
   // Employ binary search to check if word is in the dictionary
   float searchRange = s_Words.size() / 2;
-  size_t index = searchRange;
+  float index = searchRange;
   
   std::string dictWord = s_Words[index];
   for (;;)
@@ -95,13 +95,17 @@ bool Dictionary::CheckWord(const char *word)
     if (direction == 0) return true; // If the words are equal
     
     searchRange /= 2;
-    if (searchRange < 1) break; // If the words next to us weren't it.
+    if (searchRange < 0.5) break; // If the words next to us weren't it.
       
-    index += static_cast<int>(static_cast<float>(direction) * searchRange);
-    dictWord = s_Words[index];
+    index += static_cast<float>(direction) * searchRange;
+    dictWord = s_Words[static_cast<int>(index)];
   }
-  
   return false;
+}
+
+int Dictionary::AlphaCompare(const char *word1, const char *word2)
+{
+  return alphaCmp(word1, word2);
 }
 
 }

@@ -22,6 +22,7 @@ public:
   static void Shutdown();
   
   static bool CheckWord(const char* word);
+  static int AlphaCompare(const char* word1, const char* word2);
   
 private:
   static std::vector<std::string> s_Words;

@@ -21,8 +21,8 @@ public:
   
 private:
   std::vector<Word*> m_Words;
-  Word* m_StartWord;
   Word* m_TargetWord;
+  bool m_Won = false;
 };
 
 }
