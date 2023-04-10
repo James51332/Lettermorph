@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "scene.h"
 #include "level.h"
+#include "dictionary.h"
 
 #include <SDL3/SDL_image.h>
 
@@ -43,6 +44,9 @@ void Game::Run()
     return;
   }
   
+  // Dictionary
+  Dictionary::Init();
+  
   // Create a window
   WindowDesc desc;
   desc.width = 1000;
@@ -67,6 +71,7 @@ void Game::Run()
   // Deinitialize
   delete m_Window;
   
+  Dictionary::Shutdown();
   IMG_Quit();
   SDL_Quit();
 }

@@ -1,6 +1,7 @@
 #include "level.h"
 
 #include "renderer.h"
+#include "dictionary.h"
 
 namespace ltrm
 {
