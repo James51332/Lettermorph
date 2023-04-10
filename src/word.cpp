@@ -8,4 +8,9 @@ Word::Word()
   
 }
 
+Word::Word(const char* word)
+	: m_String(word)
+{
+}
+
 }

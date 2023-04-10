@@ -25,8 +25,6 @@ private:
   
   bool m_Running = false;
   Window* m_Window = nullptr;
-  
-  Word* m_Word = nullptr;
 };
 
 }

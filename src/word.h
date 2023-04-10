@@ -8,6 +8,7 @@ class Word
 {
 public:
   Word();
+  Word(const char*);
   
   size_t GetLength() const { return m_String.length(); }
   const char* GetValue() const { return m_String.c_str(); }

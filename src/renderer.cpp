@@ -75,4 +75,19 @@ void Renderer::Letter(char c, float x, float y, float h)
   SDL_RenderTexture(s_Renderer, s_FontTexture->GetTexture(), &srcRect, &dstRect);
 }
 
+float Renderer::GetWidth()
+{
+  int w;
+  SDL_GetRenderOutputSize(s_Renderer, &w, nullptr);
+  return static_cast<float>(w);
+}
+
+float Renderer::GetHeight()
+{
+  int h;
+  SDL_GetRenderOutputSize(s_Renderer, nullptr, &h);
+  return static_cast<float>(h);
+}
+
+
 }

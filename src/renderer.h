@@ -21,6 +21,9 @@ public:
   static void Image(Texture*, float, float, float, float);
   static void Letter(char c, float x, float y, float h);
   
+  static float GetWidth();
+  static float GetHeight();
+  
 private:
   static void Init(SDL_Window* window);
   static void Present();
