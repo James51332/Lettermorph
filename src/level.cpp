@@ -11,9 +11,6 @@ namespace ltrm
 
 LevelScene::LevelScene()
 {
-  m_TargetWord = new Word("HARP");
-  m_Words.push_back(new Word("MILE"));
-  m_Words.push_back(new Word(""));
 }
 
 LevelScene::~LevelScene()
@@ -26,6 +23,9 @@ LevelScene::~LevelScene()
 
 void LevelScene::Load()
 {
+  m_TargetWord = new Word("HARP");
+  m_Words.push_back(new Word("MILE"));
+  m_Words.push_back(new Word(""));
 }
 
 static constexpr float tileSize = 200;
@@ -74,13 +74,21 @@ void LevelScene::Update()
   {
     if (UI::Button(0, 0, 100, 100))
     {
-      SDL_Log("pressed!");
+      SceneManager::ChangeScene("main");
     }
   }
 }
 
 void LevelScene::Unload()
 {
+  while (!m_Words.empty())
+  {
+    Word* last = m_Words[m_Words.size() - 1];
+    m_Words.pop_back();
+    delete last;
+  }
+  delete m_TargetWord;
+  m_Won = false;
 }
 
 void LevelScene::KeyDown(SDL_Keycode key)

@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "scene.h"
 #include "level.h"
+#include "menu.h"
 #include "dictionary.h"
 
 #include <SDL3/SDL_image.h>
@@ -56,7 +57,8 @@ void Game::Run()
   m_Window = new Window(desc);
   
   // Scene Manager
-  SceneManager::Init(new LevelScene(), "main");
+  SceneManager::Init(new MenuScene(), "main");
+  SceneManager::AddScene(new LevelScene(), "level");
   
   // Game loop
   while (m_Running)
