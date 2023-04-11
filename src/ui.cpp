@@ -24,7 +24,10 @@ void UI::Shutdown()
 {
   TTF_CloseFont(s_Font);
 
-  // TODO: Delete all textures in map
+  for (auto pair : s_TextTextures)
+  {
+    delete pair.second;
+  }
 }
 
 void UI::Begin()
@@ -51,9 +54,24 @@ bool UI::Button(float x, float y, float w, float h)
   return highlighted && Input::MousePress(SDL_BUTTON_LEFT);
 }
 
+bool UI::Button(const char* text, float x, float y)
+{
+  constexpr float btnPadding = 50;
+  
+  int w, h;
+  TextSize(text, &w, &h);
+  w += 2 * btnPadding;
+  h += 2 * btnPadding;
+  
+  bool clicked = UI::Button(x - w/2, y - h/2, w, h);
+  UI::Text(text, x, y);
+  return clicked;
+}
+
 void UI::Text(const char* text, float x, float y)
 {
   // If the text hasn't already been rendered, we need to create the texture
+  // This system should be fine because our app is very ui light.
   Texture* texture;
   
   if (s_TextTextures.find(text) == s_TextTextures.end())
@@ -70,6 +88,11 @@ void UI::Text(const char* text, float x, float y)
   int w, h;
   SDL_QueryTexture(texture->GetTexture(), nullptr, nullptr, &w, &h);
   Renderer::Image(texture, x - w/2, y - h/2, w, h);
+}
+
+void UI::TextSize(const char* text, int* w, int* h)
+{
+  TTF_SizeText(s_Font, text, w, h);
 }
 
 }

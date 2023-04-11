@@ -21,7 +21,10 @@ public:
   static void End();
   
   static bool Button(float, float, float, float);
+  static bool Button(const char*, float, float);
   static void Text(const char*, float, float);
+  
+  static void TextSize(const char*, int*, int*);
   
 private:
   static std::unordered_map<const char*, Texture*> s_TextTextures;

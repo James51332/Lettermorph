@@ -73,7 +73,24 @@ void LevelScene::Update()
   // Win Screen
   if (m_Won)
   {
-    if (UI::Button(0, 0, 100, 100))
+    float panelWidth = 800;
+    float panelHeight = 600;
+    float panelX = (Renderer::GetWidth() - panelWidth) / 2;
+    float panelY = (Renderer::GetHeight() - panelHeight) / 2;
+    float buttonPadding = tileMargin;
+    
+    Renderer::Fill(Color::Dark);
+    Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
+    
+    int textHeight;
+    UI::TextSize("You Won!", nullptr, &textHeight);
+    UI::Text("You Won!", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2);
+    
+    int btnWidth, btnHeight;
+    UI::TextSize("Back", &btnWidth, &btnHeight);
+    btnWidth += 100;
+    btnHeight += 100;
+    if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2))
     {
       SceneManager::ChangeScene("main");
     }

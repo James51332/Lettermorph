@@ -75,7 +75,9 @@ void Game::Run()
   {
     m_Window->PollEvents();
     
+    UI::Begin();
     SceneManager::Update();
+    UI::End();
     
     m_Window->SwapBuffers();
   }

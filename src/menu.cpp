@@ -30,17 +30,12 @@ void MenuScene::Update()
 {
   Renderer::Clear(Color::Accent);
   
-  constexpr int width = 500;
-  constexpr int height = 300;
-  int x = (Renderer::GetWidth() - width) / 2;
-  int y = (Renderer::GetHeight() - height) / 2;
+  UI::Text("Lettermorph", Renderer::GetWidth() / 2, 200);
   
-  if (UI::Button(x, y, width, height))
+  if (UI::Button("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2))
   {
     SceneManager::ChangeScene("level");
   }
-  UI::Text("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2);
-  
 }
 
 void MenuScene::KeyDown(SDL_Keycode key)
