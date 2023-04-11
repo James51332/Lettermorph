@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "ui.h"
 #include "renderer.h"
+#include "colors.h"
 
 namespace ltrm
 {
@@ -27,7 +28,7 @@ void MenuScene::Unload()
 
 void MenuScene::Update()
 {
-  Renderer::Clear({0,0,0,255});
+  Renderer::Clear(Color::Accent);
   
   if (UI::Button(0, 0, 400, 400))
   {

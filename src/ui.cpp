@@ -1,6 +1,7 @@
 #include "ui.h"
 #include "input.h"
 #include "renderer.h"
+#include "colors.h"
 
 namespace ltrm
 {
@@ -32,9 +33,9 @@ bool UI::Button(float x, float y, float w, float h)
   bool highlighted = SDL_PointInRectFloat(&mouse, &bounds);
   
   if (highlighted)
-    Renderer::Fill({0xff,0x00,0x00,0xff});
+    Renderer::Fill(Color::Light);
   else
-    Renderer::Fill({0x55,0x55,0x55,0xff});
+    Renderer::Fill(Color::Dark);
   
   Renderer::Rect(x, y, w, h);
   return highlighted && Input::MousePress(SDL_BUTTON_LEFT);

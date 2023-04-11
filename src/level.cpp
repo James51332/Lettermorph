@@ -3,6 +3,7 @@
 #include "renderer.h"
 #include "dictionary.h"
 #include "ui.h"
+#include "colors.h"
 
 #include <SDL3/SDL.h>
 
@@ -42,7 +43,7 @@ static void DrawWord(Word* word, float x, float y)
     float centerX = x + tileSize/2;
     float centerY = y + tileSize/2;
     
-    Renderer::Fill({0x55,0x55,0x55,0xff});
+    Renderer::Fill(Color::Dark);
     Renderer::Rect(x, y, tileSize, tileSize);
     Renderer::Letter(c, centerX - letterSize/2, centerY-letterSize/2, letterSize);
     
@@ -52,7 +53,7 @@ static void DrawWord(Word* word, float x, float y)
 
 void LevelScene::Update()
 {
-  Renderer::Clear({0x10, 0x10, 0x10, 0xff});
+  Renderer::Clear(Color::Accent);
   
   // Draw working words
   float x = Renderer::GetWidth() / 2;
