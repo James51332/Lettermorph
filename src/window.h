@@ -30,6 +30,7 @@ public:
   SDL_Window* GetHandle() { return m_Handle; }
   
 private:
+  float m_RenderScale = 1;
   WindowDesc m_Desc;
   SDL_Window* m_Handle;
 };

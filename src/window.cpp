@@ -1,6 +1,7 @@
 #include "window.h"
 #include "game.h"
 #include "renderer.h"
+#include "input.h"
 
 namespace ltrm
 {
@@ -10,12 +11,21 @@ Window::Window(const WindowDesc& desc)
   SDL_WindowFlags flags = desc.resizeable ? SDL_WINDOW_RESIZABLE : (SDL_WindowFlags)0;
   m_Handle = SDL_CreateWindow(desc.title.c_str(), desc.width, desc.height, flags);
   
+  Input::Init();
   Renderer::Init(m_Handle);
+  
+  // For High DPI Displays
+  {
+  	int w;
+  	SDL_GetRenderWindowSize(Renderer::GetRenderer(), &w, nullptr);
+  	m_RenderScale = Renderer::GetWidth() / static_cast<float>(w);
+  }
 }
 
 Window::~Window()
 {
   Renderer::Shutdown();
+  Input::Shutdown();
   
   SDL_DestroyWindow(m_Handle);
   m_Handle = nullptr;
@@ -23,6 +33,8 @@ Window::~Window()
 
 void Window::PollEvents()
 {
+  Input::Update();
+  
   SDL_Event event;
   while (SDL_PollEvent(&event))
   {
@@ -33,7 +45,6 @@ void Window::PollEvents()
         Game::GetInstance()->Stop();
         break;
       }
-        
       case SDL_EVENT_KEY_DOWN:
       {
         if (event.key.keysym.sym == SDLK_ESCAPE)
@@ -42,11 +53,30 @@ void Window::PollEvents()
           break;
         }
         
+        Input::SetKeyDown(event.key.keysym.sym);
         Game::GetInstance()->KeyDown(event.key.keysym.sym);
       }
-        
-      default:
+      case SDL_EVENT_KEY_UP:
+      {
+        Input::SetKeyUp(event.key.keysym.sym);
+      }
+      case SDL_EVENT_MOUSE_BUTTON_DOWN:
+      {
+        Input::SetMouseDown(event.button.button);
         break;
+      }
+      case SDL_EVENT_MOUSE_BUTTON_UP:
+      {
+        Input::SetMouseUp(event.button.button);
+        break;
+      }
+      case SDL_EVENT_MOUSE_MOTION:
+      {
+        Input::SetMousePos(event.motion.x * m_RenderScale, event.motion.y * m_RenderScale);
+        break;
+      }
+        
+      default: break;
     }
   }
 }

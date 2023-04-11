@@ -2,6 +2,7 @@
 
 #include "renderer.h"
 #include "dictionary.h"
+#include "ui.h"
 
 #include <SDL3/SDL.h>
 
@@ -71,8 +72,10 @@ void LevelScene::Update()
   // Win Screen
   if (m_Won)
   {
-    Renderer::Fill({255,0,0,255});
-    Renderer::Rect(0, 0, 200, 200);
+    if (UI::Button(0, 0, 100, 100))
+    {
+      SDL_Log("pressed!");
+    }
   }
 }
 
@@ -82,7 +85,7 @@ void LevelScene::Unload()
 
 void LevelScene::KeyDown(SDL_Keycode key)
 {
-  if (m_Won) return; // Don't handle key events after winning
+  if (m_Won) return;
   
   Word* lastWord = m_Words[m_Words.size()-1];
   if (isalpha(key))
@@ -117,7 +120,6 @@ void LevelScene::KeyDown(SDL_Keycode key)
     if (Dictionary::AlphaCompare(lastWord->GetValue(), m_TargetWord->GetValue()) == 0)
     {
       m_Won = true;
-      return;
     }
     
     // Append a new word to the back
