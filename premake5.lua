@@ -33,18 +33,21 @@ project "Lettermorph"
 	sysincludedirs
 	{
 		"thirdparty/SDL3/include",
-  	"thirdparty/SDL_image/include"
+  	"thirdparty/SDL_image/include",
+  	"thirdparty/SDL_ttf/include"
 	}
 	
 	libdirs
 	{
 		"thirdparty/SDL3/lib/%{cfg.system}/%{cfg.shortname}",
-  	"thirdparty/SDL_image/lib/%{cfg.system}/%{cfg.shortname}"
-	}
+    "thirdparty/SDL_ttf/lib/%{cfg.system}/%{cfg.shortname}",
+    "thirdparty/SDL_image/lib/%{cfg.system}/%{cfg.shortname}"
+  }
 
 	links
 	{
 		"SDL3",
+  	"SDL3_ttf",
   	"SDL3_image"
 	}
 
