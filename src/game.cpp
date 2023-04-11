@@ -5,8 +5,10 @@
 #include "level.h"
 #include "menu.h"
 #include "dictionary.h"
+#include "ui.h"
 
 #include <SDL3/SDL_image.h>
+#include <SDL3/SDL_ttf.h>
 
 namespace ltrm
 {
@@ -41,12 +43,20 @@ void Game::Run()
   if (!IMG_Init(IMG_INIT_PNG))
   {
     SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
-    Game::GetInstance()->Stop();
+    Stop();
+    return;
+  }
+  
+  if (TTF_Init() == -1)
+  {
+    SDL_Log("Failed to initialize SDL_ttf: %s", TTF_GetError());
+    Stop();
     return;
   }
   
   // Dictionary
   Dictionary::Init();
+  UI::Init();
   
   // Create a window
   WindowDesc desc;
@@ -74,6 +84,8 @@ void Game::Run()
   delete m_Window;
   
   Dictionary::Shutdown();
+  UI::Shutdown();
+  TTF_Quit();
   IMG_Quit();
   SDL_Quit();
 }

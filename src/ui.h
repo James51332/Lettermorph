@@ -1,7 +1,11 @@
 #pragma once
 
+#include "texture.h"
+
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_ttf.h>
 #include <vector>
+#include <unordered_map>
 
 namespace ltrm
 {
@@ -17,6 +21,11 @@ public:
   static void End();
   
   static bool Button(float, float, float, float);
+  static void Text(const char*, float, float);
+  
+private:
+  static std::unordered_map<const char*, Texture*> s_TextTextures;
+  static TTF_Font* s_Font;
 };
 
 }

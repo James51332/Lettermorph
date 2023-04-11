@@ -9,6 +9,7 @@ class Texture
 {
 public:
   Texture(const char* file);
+  Texture(SDL_Texture* texture);
   ~Texture();
   
   SDL_Texture* GetTexture() { return m_Texture; }

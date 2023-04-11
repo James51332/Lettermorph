@@ -30,10 +30,17 @@ void MenuScene::Update()
 {
   Renderer::Clear(Color::Accent);
   
-  if (UI::Button(0, 0, 400, 400))
+  constexpr int width = 500;
+  constexpr int height = 300;
+  int x = (Renderer::GetWidth() - width) / 2;
+  int y = (Renderer::GetHeight() - height) / 2;
+  
+  if (UI::Button(x, y, width, height))
   {
     SceneManager::ChangeScene("level");
   }
+  UI::Text("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2);
+  
 }
 
 void MenuScene::KeyDown(SDL_Keycode key)

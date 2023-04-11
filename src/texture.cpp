@@ -24,6 +24,11 @@ Texture::Texture(const char* file)
   }
 }
 
+Texture::Texture(SDL_Texture* texture)
+{
+  m_Texture = texture;
+}
+
 Texture::~Texture()
 {
   SDL_DestroyTexture(m_Texture);
