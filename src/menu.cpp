@@ -41,8 +41,7 @@ void MenuScene::Update()
   Renderer::Clear(Color::Accent);
   
   {
-  	if (Input::KeyPress(SDLK_a)) Animator::SetAnimationActive(m_TitleAnimID);
-    if (Input::KeyDown(SDLK_SPACE)) Animator::ResetAnimation(m_TitleAnimID);
+    if (Input::KeyPress(SDLK_a)) Animator::SetAnimationActive(m_TitleAnimID);
     
     float x = Animator::QueryAnimation(m_TitleAnimID).Value;
     UI::Text("Lettermorph", x, 200, 1.0f);

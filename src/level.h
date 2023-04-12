@@ -25,6 +25,9 @@ private:
   bool m_Won = false;
   
   int m_ShakeAnimation;
+  
+  float m_ScrollOffset;
+  int m_ScrollAnimation;
 };
 
 }

@@ -20,6 +20,14 @@ LevelScene::LevelScene()
   shake.Loop = false;
   shake.Duration = 0.2;
   m_ShakeAnimation = Animator::RegisterAnimation(shake);
+
+  Animation scroll;
+  scroll.Type = AnimationType::Lerp;
+  scroll.Min = 0;
+  scroll.Max = Style::TileSize + Style::SmallMargin;
+  scroll.Duration = 0.15;
+  scroll.Loop = false;
+  m_ScrollAnimation = Animator::RegisterAnimation(scroll);
 }
 
 LevelScene::~LevelScene()
@@ -31,27 +39,25 @@ void LevelScene::Load()
   m_TargetWord = new Word("HARP");
   m_Words.push_back(new Word("MILE"));
   m_Words.push_back(new Word(""));
+  
+  m_ScrollOffset = 0;
 }
-
-static constexpr float tileSize = 200;
-static constexpr float letterSize = 90;
-static constexpr float tileMargin = 20;
 
 static void DrawWord(Word* word, float x, float y)
 {
-  float wordWidth = word->GetLength() * (tileSize + tileMargin) - tileMargin;
+  float wordWidth = word->GetLength() * (Style::TileSize + Style::SmallMargin) - Style::SmallMargin;
   x -= wordWidth / 2;
   for (int i = 0; i < word->GetLength(); i++)
   {
     char c = word->operator[](i);
-    float centerX = x + tileSize/2;
-    float centerY = y + tileSize/2;
+    float centerX = x + Style::TileSize / 2;
+    float centerY = y + Style::TileSize /2;
     
     Renderer::Fill(Color::Dark);
-    Renderer::Rect(x, y, tileSize, tileSize);
-    Renderer::Letter(c, centerX - letterSize/2, centerY-letterSize/2, letterSize);
+    Renderer::Rect(x, y, Style::TileSize, Style::TileSize);
+    Renderer::Letter(c, centerX - Style::LetterSize / 2, centerY - Style::LetterSize/2, Style::LetterSize);
     
-    x += tileSize + tileMargin;
+    x += Style::TileSize + Style::SmallMargin;
   }
 }
 
@@ -59,20 +65,31 @@ void LevelScene::Update()
 {
   Renderer::Clear(Color::Accent);
   
+  // Handle Scroll Animation
+  {
+    const Animation& anim = Animator::QueryAnimation(m_ScrollAnimation);
+    if (anim.Progress == 1)
+    {
+      m_ScrollOffset += anim.Value;
+      Animator::SetAnimationActive(m_ScrollAnimation, false);
+      Animator::ResetAnimation(m_ScrollAnimation);
+    }
+  }
+  
   // Draw working words
-  float y = tileMargin;
+  float y = Style::SmallMargin - m_ScrollOffset - Animator::QueryAnimation(m_ScrollAnimation).Value;
   float x = Renderer::GetWidth() / 2;
   int num = 0;
   for (auto* word : m_Words)
   {
     if (num == m_Words.size() - 1) x += Animator::QueryAnimation(m_ShakeAnimation).Value;
-    DrawWord(word, x, y + num * (tileSize + tileMargin));
+    DrawWord(word, x, y + num * (Style::TileSize + Style::SmallMargin));
     num++;
   }
   
   // Draw target words
   x = Renderer::GetWidth() / 2;
-  y = Renderer::GetHeight() - (tileMargin + tileSize);
+  y = Renderer::GetHeight() - (Style::TileSize + Style::SmallMargin);
   DrawWord(m_TargetWord, x, y);
   
   // Win Screen
@@ -82,7 +99,7 @@ void LevelScene::Update()
     float panelHeight = 600;
     float panelX = (Renderer::GetWidth() - panelWidth) / 2;
     float panelY = (Renderer::GetHeight() - panelHeight) / 2;
-    float buttonPadding = tileMargin;
+    float buttonPadding = Style::SmallMargin;
     
     Renderer::Fill(Color::Dark);
     Renderer::Stroke(Color::Middle);
@@ -163,6 +180,11 @@ void LevelScene::KeyDown(SDL_Keycode key)
     
     // Append a new word to the back
     m_Words.push_back(new Word(""));
+    
+    if (m_Words.size() > 5)
+    {
+      Animator::SetAnimationActive(m_ScrollAnimation);
+    }
   }
 }
 

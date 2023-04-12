@@ -20,6 +20,10 @@ struct Style
   
   constexpr static SDL_FPoint SmallPadding{20, 10};
   constexpr static SDL_FPoint LargePadding{50, 30};
+  constexpr static float SmallMargin = 20;
+  
+  constexpr static float TileSize = 200;
+  constexpr static float LetterSize = 90;
 };
 
 }
