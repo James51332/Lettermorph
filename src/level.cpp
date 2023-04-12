@@ -4,6 +4,7 @@
 #include "dictionary.h"
 #include "ui.h"
 #include "style.h"
+#include "animation.h"
 
 #include <SDL3/SDL.h>
 
@@ -12,6 +13,13 @@ namespace ltrm
 
 LevelScene::LevelScene()
 {
+  Animation shake;
+  shake.Type = AnimationType::Wave;
+  shake.Min = -15;
+  shake.Max = 15;
+  shake.Loop = false;
+  shake.Duration = 0.2;
+  m_ShakeAnimation = Animator::RegisterAnimation(shake);
 }
 
 LevelScene::~LevelScene()
@@ -52,11 +60,12 @@ void LevelScene::Update()
   Renderer::Clear(Color::Accent);
   
   // Draw working words
-  float x = Renderer::GetWidth() / 2;
   float y = tileMargin;
+  float x = Renderer::GetWidth() / 2;
   int num = 0;
   for (auto* word : m_Words)
   {
+    if (num == m_Words.size() - 1) x += Animator::QueryAnimation(m_ShakeAnimation).Value;
     DrawWord(word, x, y + num * (tileSize + tileMargin));
     num++;
   }
@@ -121,10 +130,12 @@ void LevelScene::KeyDown(SDL_Keycode key)
   }
   else if (key == SDLK_RETURN)
   {
+    bool valid = true;
+    
     // We need to check if the word is valid
     {
-    	if (lastWord->GetLength() != m_TargetWord->GetLength()) return;
-      if (!Dictionary::CheckWord(lastWord->GetValue())) return;
+    	if (lastWord->GetLength() != m_TargetWord->GetLength()) valid = false;
+      if (!Dictionary::CheckWord(lastWord->GetValue())) valid = false;
     	
       Word* previous = m_Words[m_Words.size() - 2];
     	size_t length = lastWord->GetLength();
@@ -135,7 +146,13 @@ void LevelScene::KeyDown(SDL_Keycode key)
     	    char c2 = SDL_toupper(previous->GetValue()[i]);
     	    if (c1 != c2) differences++;
     	}
-      if (differences != 1) return;
+      if (differences != 1) valid = false;
+    }
+    
+    if (!valid)
+    {
+      Animator::SetAnimationActive(m_ShakeAnimation);
+      return;
     }
     
     // If we won, finished with level!

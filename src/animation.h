@@ -27,6 +27,7 @@ struct Animation
   bool Active = false;
   bool ResetOnInactive = true;
   bool ResetOnComplete = false;
+  bool Loop = true;
   
   float Value = 0;
   float Progress = 0;

@@ -23,6 +23,8 @@ private:
   std::vector<Word*> m_Words;
   Word* m_TargetWord;
   bool m_Won = false;
+  
+  int m_ShakeAnimation;
 };
 
 }

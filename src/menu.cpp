@@ -11,12 +11,12 @@ namespace ltrm
 MenuScene::MenuScene()
 {
   Animation titleAnim;
-  titleAnim.Min = 100;
-  titleAnim.Max = Renderer::GetWidth() - 100;
-  titleAnim.Duration = 5;
-  titleAnim.Type = AnimationType::Lerp;
-  titleAnim.ResetOnInactive = true;
-  titleAnim.ResetOnComplete = false;
+  titleAnim.Min = 300;
+  titleAnim.Max = Renderer::GetWidth() - 300;
+  titleAnim.Duration = 1;
+  titleAnim.Type = AnimationType::Wave;
+  titleAnim.ResetOnComplete = true;
+  titleAnim.Loop = false;
   titleAnim.Active = false;
   m_TitleAnimID = Animator::RegisterAnimation(titleAnim);
 }
@@ -41,7 +41,7 @@ void MenuScene::Update()
   Renderer::Clear(Color::Accent);
   
   {
-    Animator::SetAnimationActive(m_TitleAnimID, Input::KeyDown(SDLK_a));
+  	if (Input::KeyPress(SDLK_a)) Animator::SetAnimationActive(m_TitleAnimID);
     if (Input::KeyDown(SDLK_SPACE)) Animator::ResetAnimation(m_TitleAnimID);
     
     float x = Animator::QueryAnimation(m_TitleAnimID).Value;
@@ -56,7 +56,7 @@ void MenuScene::Update()
 
 void MenuScene::KeyDown(SDL_Keycode key)
 {
-  
+
 }
 
 }

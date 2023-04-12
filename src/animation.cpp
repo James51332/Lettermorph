@@ -1,5 +1,6 @@
 #include "animation.h"
 
+
 namespace ltrm
 {
 
@@ -95,16 +96,47 @@ static void lerpUpdate(Animation& animation, float timestep)
     
     if (animation.Value >= animation.Max)
     {
-      animation.Active = false;
-      animation.Value = animation.Max;
-      animation.Progress = 1;
+      animation.Value = animation.Max; // We'll still keep it at the end until the next frame
+      
+      if (!animation.Loop)
+      {
+        animation.Active = false;
+        animation.Progress = 1;
+      } else
+      {
+        animation.Progress = 0;
+      }
     }
   }
 }
 
 static void waveUpdate(Animation& animation, float timestep)
 {
-	// TODO
+  if (!animation.Active)
+  {
+    if (!animation.ResetOnInactive && animation.Progress < 1) return;
+    if (!animation.ResetOnComplete && animation.Progress == 1) return;
+    
+    animation.Value = (animation.Min + animation.Max) / 2;
+    animation.Progress = 0;
+  } else
+  {
+    animation.Progress += timestep / animation.Duration;
+    animation.Value = (animation.Min + animation.Max + SDL_sinf(animation.Progress * 3.1415f * 2) * (animation.Max - animation.Min)) / 2;
+    
+    if (animation.Progress >= 1)
+    {
+      animation.Value = (animation.Max + animation.Min) / 2;
+      if (!animation.Loop)
+      {
+        animation.Active = false;
+        animation.Progress = 0;
+      } else
+      {
+        animation.Progress = 0;
+      }
+    }
+  }
 }
 
 static void colorUpdate(ColorAnimation& animation, float timestep)
