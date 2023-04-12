@@ -23,7 +23,16 @@ public:
   static void ButtonSize(const char*, int*, int*, bool large);
   
 private:
-  static std::unordered_map<const char*, Texture*> s_TextTextures;
+  struct TextTexture
+  {
+    Texture* Texture = nullptr;
+    int Width = 0;
+    int Height = 0;
+    
+    ~TextTexture() { if (Texture) delete Texture; }
+  };
+  
+  static std::unordered_map<const char*, TextTexture*> s_TextTextures;
   static TTF_Font* s_Font;
 };
 

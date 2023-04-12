@@ -9,7 +9,7 @@ namespace ltrm
 {
 
 TTF_Font* UI::s_Font;
-std::unordered_map<const char*, Texture*> UI::s_TextTextures;
+std::unordered_map<const char*, UI::TextTexture*> UI::s_TextTextures;
 
 void UI::Init()
 {
@@ -47,8 +47,12 @@ bool UI::Button(const char* text, float x, float y, bool large)
     Renderer::Fill(Color::Middle);
   else
     Renderer::Fill(Color::Dark);
-    
+  
+  float tmp = Renderer::GetStrokeWeight();
+  Renderer::StrokeWeight(0);
   Renderer::Rect(bounds.x, bounds.y, bounds.w, bounds.h);
+  Renderer::StrokeWeight(tmp);
+  
   UI::Text(text, x, y, large ? Style::LargeScale : Style::SmallScale);
   
 	return highlighted && Input::MousePress(SDL_BUTTON_LEFT);
@@ -58,25 +62,26 @@ void UI::Text(const char* text, float x, float y, float scale)
 {
   // If the text hasn't already been rendered, we need to create the texture
   // This system should be fine because our app is very ui light.
-  Texture* texture;
+  TextTexture* textTexture;
   
   if (s_TextTextures.find(text) == s_TextTextures.end())
   {
     SDL_Surface* surface = TTF_RenderText_Blended(s_Font, text, Color::Light);
-    texture = new Texture(SDL_CreateTextureFromSurface(Renderer::GetRenderer(), surface));
-    s_TextTextures.try_emplace(text, texture);
+    
+    textTexture = new TextTexture();
+    textTexture->Texture = new Texture(SDL_CreateTextureFromSurface(Renderer::GetRenderer(), surface));
+    SDL_QueryTexture(textTexture->Texture->GetTexture(), nullptr, nullptr, &textTexture->Width, &textTexture->Height);
+    s_TextTextures.try_emplace(text, textTexture);
+    
     SDL_DestroySurface(surface);
   } else
   {
-    texture = s_TextTextures.at(text);
+    textTexture = s_TextTextures.at(text);
   }
   
-  int w, h;
-  SDL_QueryTexture(texture->GetTexture(), nullptr, nullptr, &w, &h);
-  w *= scale;
-  h *= scale;
-  
-  Renderer::Image(texture, x - w/2, y - h/2, w, h);
+  float sw = textTexture->Width * scale;
+  float sh = textTexture->Height * scale;
+  Renderer::Image(textTexture->Texture, x - sw/2, y - sh/2, sw, sh);
 }
 
 void UI::TextSize(const char* text, int* w, int* h, float scale)

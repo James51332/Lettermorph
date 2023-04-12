@@ -55,10 +55,12 @@ void Window::PollEvents()
         
         Input::SetKeyDown(event.key.keysym.sym);
         Game::GetInstance()->KeyDown(event.key.keysym.sym);
+        break;
       }
       case SDL_EVENT_KEY_UP:
       {
         Input::SetKeyUp(event.key.keysym.sym);
+        break;
       }
       case SDL_EVENT_MOUSE_BUTTON_DOWN:
       {

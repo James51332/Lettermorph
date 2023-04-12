@@ -76,6 +76,8 @@ void LevelScene::Update()
     float buttonPadding = tileMargin;
     
     Renderer::Fill(Color::Dark);
+    Renderer::Stroke(Color::Middle);
+    Renderer::StrokeWeight(5);
     Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
     
     int textHeight;

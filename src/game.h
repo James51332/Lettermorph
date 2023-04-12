@@ -14,8 +14,12 @@ public:
   Game();
   ~Game();
   
+  void Init();
+  void Shutdown();
+  
   void Run();
   void Stop();
+  
   void KeyDown(SDL_Keycode key);
   
   static Game* GetInstance() { return s_Instance; }

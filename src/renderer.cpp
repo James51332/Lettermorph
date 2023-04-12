@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include "game.h"
+#include "style.h"
 
 #include <SDL3/SDL_image.h>
 
@@ -9,6 +10,10 @@ namespace ltrm
 bool Renderer::s_Initalized = false;
 SDL_Renderer* Renderer::s_Renderer = nullptr;
 Texture* Renderer::s_FontTexture = nullptr;
+
+float Renderer::s_StrokeWeight = 0;
+SDL_Color Renderer::s_FillColor = Color::Dark;
+SDL_Color Renderer::s_StrokeColor = Color::Dark;
 
 void Renderer::Init(SDL_Window *window)
 {
@@ -42,18 +47,40 @@ void Renderer::Clear(const SDL_Color &color)
 
 void Renderer::Fill(const SDL_Color &color)
 {
-  SDL_SetRenderDrawColor(s_Renderer, color.r, color.g, color.b, color.a);
+  s_FillColor = color;
+}
+
+void Renderer::Stroke(const SDL_Color &color)
+{
+  s_StrokeColor = color;
+}
+
+void Renderer::StrokeWeight(float w)
+{
+  s_StrokeWeight = w;
 }
 
 void Renderer::Rect(float x, float y, float w, float h)
 {
-  SDL_FRect rect =  {x,y,w,h};
-  SDL_RenderFillRect(s_Renderer, &rect);
+  SDL_FRect outer =  {x, y, w, h};
+  if (s_StrokeWeight > 0)
+  {
+    SDL_SetRenderDrawColor(s_Renderer, s_StrokeColor.r, s_StrokeColor.g, s_StrokeColor.b, s_StrokeColor.a);
+    SDL_RenderFillRect(s_Renderer, &outer);
+    
+    SDL_FRect inner =  {x + s_StrokeWeight, y + s_StrokeWeight, w - 2 * s_StrokeWeight, h - 2 * s_StrokeWeight};
+    SDL_SetRenderDrawColor(s_Renderer, s_FillColor.r, s_FillColor.g, s_FillColor.b, s_FillColor.a);
+    SDL_RenderFillRect(s_Renderer, &inner);
+  } else
+  {
+    SDL_SetRenderDrawColor(s_Renderer, s_FillColor.r, s_FillColor.g, s_FillColor.b, s_FillColor.a);
+    SDL_RenderFillRect(s_Renderer, &outer);
+  }
 }
 
 void Renderer::Image(Texture* tex, float x, float y, float w, float h)
 {
-  SDL_FRect dst = {x,y,w,h};
+  SDL_FRect dst = {x, y, w, h};
   SDL_RenderTexture(s_Renderer, tex->GetTexture(), tex->HasClipRect() ? &tex->GetClipRect() : nullptr, &dst);
 }
 

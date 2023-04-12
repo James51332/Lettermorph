@@ -19,6 +19,7 @@ public:
   void KeyDown(SDL_Keycode key);
   
 private:
+  int m_TitleAnimID;
 };
 
 }

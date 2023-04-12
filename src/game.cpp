@@ -6,6 +6,7 @@
 #include "menu.h"
 #include "dictionary.h"
 #include "ui.h"
+#include "animation.h"
 
 #include <SDL3/SDL_image.h>
 #include <SDL3/SDL_ttf.h>
@@ -25,9 +26,7 @@ Game::~Game()
 {
 }
 
-// We're going to contain the entire life cycle of the app here.
-// All resources should be deinitialized before the destructor is called.
-void Game::Run()
+void Game::Init()
 {
   // We begin running here, because we may terminate before actual gameloop begins
   m_Running = true;
@@ -54,7 +53,7 @@ void Game::Run()
     return;
   }
   
-  // Dictionary
+  Animator::Init();
   Dictionary::Init();
   UI::Init();
   
@@ -69,26 +68,44 @@ void Game::Run()
   // Scene Manager
   SceneManager::Init(new MenuScene(), "main");
   SceneManager::AddScene(new LevelScene(), "level");
-  
-  // Game loop
-  while (m_Running)
-  {
-    m_Window->PollEvents();
-    
-    SceneManager::Update();
-    
-    m_Window->SwapBuffers();
-  }
-  
+}
+
+void Game::Shutdown()
+{
   // Deinitialize
   delete m_Window;
   
   SceneManager::Shutdown();
   Dictionary::Shutdown();
   UI::Shutdown();
+  Animator::Shutdown();
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();
+}
+
+// We're going to contain the entire life cycle of the app here.
+// All resources should be deinitialized before the destructor is called.
+void Game::Run()
+{
+  Init();
+  
+  // Game loop
+  float lastTime = SDL_GetTicks();
+  while (m_Running)
+  {
+    m_Window->PollEvents();
+    
+    float timestep = (SDL_GetTicks() - lastTime) / 1000.0f;
+    lastTime = SDL_GetTicks();
+    Animator::Update(timestep);
+    
+    SceneManager::Update();
+    
+    m_Window->SwapBuffers();
+  }
+  
+  Shutdown();
 }
 
 void Game::Stop()
