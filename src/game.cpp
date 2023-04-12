@@ -75,9 +75,7 @@ void Game::Run()
   {
     m_Window->PollEvents();
     
-    UI::Begin();
     SceneManager::Update();
-    UI::End();
     
     m_Window->SwapBuffers();
   }
@@ -85,6 +83,7 @@ void Game::Run()
   // Deinitialize
   delete m_Window;
   
+  SceneManager::Shutdown();
   Dictionary::Shutdown();
   UI::Shutdown();
   TTF_Quit();

@@ -3,7 +3,7 @@
 #include "renderer.h"
 #include "dictionary.h"
 #include "ui.h"
-#include "colors.h"
+#include "style.h"
 
 #include <SDL3/SDL.h>
 
@@ -16,10 +16,6 @@ LevelScene::LevelScene()
 
 LevelScene::~LevelScene()
 {
-  for (auto* word : m_Words)
-    delete word;
-  
-  delete m_TargetWord;
 }
 
 void LevelScene::Load()
@@ -83,14 +79,12 @@ void LevelScene::Update()
     Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
     
     int textHeight;
-    UI::TextSize("You Won!", nullptr, &textHeight);
-    UI::Text("You Won!", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2);
+    UI::TextSize("You Won!", nullptr, &textHeight, 1.0f);
+    UI::Text("You Won!", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
     
     int btnWidth, btnHeight;
-    UI::TextSize("Back", &btnWidth, &btnHeight);
-    btnWidth += 100;
-    btnHeight += 100;
-    if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2))
+    UI::ButtonSize("Back", &btnWidth, &btnHeight, false);
+    if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, false))
     {
       SceneManager::ChangeScene("main");
     }

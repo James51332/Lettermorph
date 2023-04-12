@@ -10,21 +10,17 @@
 namespace ltrm
 {
 
-// I'm gonna try to create some form of immediate mode gui system
 class UI
 {
 public:
   static void Init();
   static void Shutdown();
+
+  static bool Button(const char*, float, float, bool large);
+  static void Text(const char*, float, float, float scale);
   
-  static void Begin();
-  static void End();
-  
-  static bool Button(float, float, float, float);
-  static bool Button(const char*, float, float);
-  static void Text(const char*, float, float);
-  
-  static void TextSize(const char*, int*, int*);
+  static void TextSize(const char*, int*, int*, float scale);
+  static void ButtonSize(const char*, int*, int*, bool large);
   
 private:
   static std::unordered_map<const char*, Texture*> s_TextTextures;

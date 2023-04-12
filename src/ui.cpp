@@ -1,7 +1,7 @@
 #include "ui.h"
 #include "input.h"
 #include "renderer.h"
-#include "colors.h"
+#include "style.h"
 
 #include <SDL3/SDL_ttf.h>
 
@@ -30,45 +30,31 @@ void UI::Shutdown()
   }
 }
 
-void UI::Begin()
+bool UI::Button(const char* text, float x, float y, bool large)
 {
+  // Calculate Button Size
+  int w, h;
+  float width, height;
+  ButtonSize(text, &w, &h, large);
+  width = static_cast<float>(w);
+  height = static_cast<float>(h);
   
-}
-
-void UI::End()
-{
-}
-
-bool UI::Button(float x, float y, float w, float h)
-{
-  SDL_FRect bounds = {x,y,w,h};
+  SDL_FRect bounds = {x - width / 2, y - height / 2, width, height};
   SDL_FPoint mouse = {Input::GetMouseX(), Input::GetMouseY()};
   bool highlighted = SDL_PointInRectFloat(&mouse, &bounds);
-  
+    
   if (highlighted)
-    Renderer::Fill(Color::Light);
+    Renderer::Fill(Color::Middle);
   else
     Renderer::Fill(Color::Dark);
+    
+  Renderer::Rect(bounds.x, bounds.y, bounds.w, bounds.h);
+  UI::Text(text, x, y, large ? Style::LargeScale : Style::SmallScale);
   
-  Renderer::Rect(x, y, w, h);
-  return highlighted && Input::MousePress(SDL_BUTTON_LEFT);
+	return highlighted && Input::MousePress(SDL_BUTTON_LEFT);
 }
 
-bool UI::Button(const char* text, float x, float y)
-{
-  constexpr float btnPadding = 50;
-  
-  int w, h;
-  TextSize(text, &w, &h);
-  w += 2 * btnPadding;
-  h += 2 * btnPadding;
-  
-  bool clicked = UI::Button(x - w/2, y - h/2, w, h);
-  UI::Text(text, x, y);
-  return clicked;
-}
-
-void UI::Text(const char* text, float x, float y)
+void UI::Text(const char* text, float x, float y, float scale)
 {
   // If the text hasn't already been rendered, we need to create the texture
   // This system should be fine because our app is very ui light.
@@ -87,12 +73,25 @@ void UI::Text(const char* text, float x, float y)
   
   int w, h;
   SDL_QueryTexture(texture->GetTexture(), nullptr, nullptr, &w, &h);
+  w *= scale;
+  h *= scale;
+  
   Renderer::Image(texture, x - w/2, y - h/2, w, h);
 }
 
-void UI::TextSize(const char* text, int* w, int* h)
+void UI::TextSize(const char* text, int* w, int* h, float scale)
 {
   TTF_SizeText(s_Font, text, w, h);
+  
+  if (w) (*w) = static_cast<int>(static_cast<float>(*w) * scale);
+  if (h) (*h) = static_cast<int>(static_cast<float>(*h) * scale);
+}
+
+void UI::ButtonSize(const char* text, int* w, int* h, bool large)
+{
+  TextSize(text, w, h, large ? Style::LargeScale : Style::SmallScale);
+  if (w) (*w) += 2 * (large ? Style::LargePadding.x : Style::SmallPadding.x);
+  if (h) (*h) += 2 * (large ? Style::LargePadding.x : Style::SmallPadding.y);
 }
 
 }

@@ -17,9 +17,9 @@ void SceneManager::Init(Scene *scene, std::string key)
 
 void SceneManager::Shutdown()
 {
+  s_ActiveScene->Unload();
   for (auto& scene : s_SceneMap)
   {
-    scene.second->Unload();
     delete scene.second;
   }
 }
