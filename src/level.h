@@ -19,6 +19,8 @@ public:
   void Unload();
   void KeyDown(SDL_Keycode key);
   
+  static void SetLevel(int level);
+  
 private:
   std::vector<Word*> m_Words;
   Word* m_TargetWord;

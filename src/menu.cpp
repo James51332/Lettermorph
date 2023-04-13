@@ -47,9 +47,14 @@ void MenuScene::Update()
     UI::Text("Lettermorph", x, 200, 1.0f);
   }
   
-  if (UI::Button("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2, true))
+  if (UI::Button("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2, 300, 200, true))
   {
     SceneManager::ChangeScene("level");
+  }
+  
+  if (UI::Button("Level", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2 + 200 + Style::SmallMargin, 300, 200, true))
+  {
+    SceneManager::ChangeScene("selection");
   }
 }
 

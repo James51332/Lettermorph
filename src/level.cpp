@@ -34,6 +34,11 @@ LevelScene::~LevelScene()
 {
 }
 
+void LevelScene::SetLevel(int level)
+{
+  
+}
+
 void LevelScene::Load()
 {
   m_TargetWord = new Word("HARP");
@@ -53,6 +58,7 @@ static void DrawWord(Word* word, float x, float y)
     float centerX = x + Style::TileSize / 2;
     float centerY = y + Style::TileSize /2;
     
+    Renderer::NoStroke();
     Renderer::Fill(Color::Dark);
     Renderer::Rect(x, y, Style::TileSize, Style::TileSize);
     Renderer::Letter(c, centerX - Style::LetterSize / 2, centerY - Style::LetterSize/2, Style::LetterSize);
@@ -106,11 +112,11 @@ void LevelScene::Update()
     Renderer::StrokeWeight(5);
     Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
     
-    int textHeight;
+    float textHeight;
     UI::TextSize("You Won!", nullptr, &textHeight, 1.0f);
     UI::Text("You Won!", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
     
-    int btnWidth, btnHeight;
+    float btnWidth, btnHeight;
     UI::ButtonSize("Back", &btnWidth, &btnHeight, false);
     if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, false))
     {
@@ -176,6 +182,7 @@ void LevelScene::KeyDown(SDL_Keycode key)
     if (Dictionary::AlphaCompare(lastWord->GetValue(), m_TargetWord->GetValue()) == 0)
     {
       m_Won = true;
+      return;
     }
     
     // Append a new word to the back

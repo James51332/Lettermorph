@@ -4,6 +4,7 @@
 #include "scene.h"
 #include "level.h"
 #include "menu.h"
+#include "selection.h"
 #include "dictionary.h"
 #include "ui.h"
 #include "animation.h"
@@ -67,6 +68,7 @@ void Game::Init()
   
   // Scene Manager
   SceneManager::Init(new MenuScene(), "main");
+  SceneManager::AddScene(new SelectionScene(), "selection");
   SceneManager::AddScene(new LevelScene(), "level");
 }
 
