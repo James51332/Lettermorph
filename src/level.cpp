@@ -48,20 +48,33 @@ void LevelScene::Load()
   m_ScrollOffset = 0;
 }
 
-static void DrawWord(Word* word, float x, float y)
+static float WordWidth(size_t length)
 {
-  float wordWidth = word->GetLength() * (Style::TileSize + Style::SmallMargin) - Style::SmallMargin;
-  x -= wordWidth / 2;
-  for (int i = 0; i < word->GetLength(); i++)
+  return length * (Style::TileSize + Style::SmallMargin) - Style::SmallMargin;
+}
+
+static void DrawWord(Word* word, float x, float y, size_t size = 0)
+{
+  if (size == 0)
   {
-    char c = word->operator[](i);
+    x -= WordWidth(word->GetLength()) / 2;
+    size = word->GetLength();
+  }
+  
+  for (int i = 0; i < size; i++)
+  {
     float centerX = x + Style::TileSize / 2;
-    float centerY = y + Style::TileSize /2;
+    float centerY = y + Style::TileSize / 2;
     
     Renderer::NoStroke();
     Renderer::Fill(Color::Dark);
     Renderer::Rect(x, y, Style::TileSize, Style::TileSize);
-    Renderer::Letter(c, centerX - Style::LetterSize / 2, centerY - Style::LetterSize/2, Style::LetterSize);
+    
+    if (i < word->GetLength())
+    {
+      char c = word->operator[](i);
+      Renderer::Letter(c, centerX - Style::LetterSize / 2, centerY - Style::LetterSize/2, Style::LetterSize);
+    }
     
     x += Style::TileSize + Style::SmallMargin;
   }
@@ -84,12 +97,12 @@ void LevelScene::Update()
   
   // Draw working words
   float y = Style::SmallMargin - m_ScrollOffset - Animator::QueryAnimation(m_ScrollAnimation).Value;
-  float x = Renderer::GetWidth() / 2;
+  float x = (Renderer::GetWidth() - WordWidth(m_TargetWord->GetLength())) / 2;
   int num = 0;
   for (auto* word : m_Words)
   {
     if (num == m_Words.size() - 1) x += Animator::QueryAnimation(m_ShakeAnimation).Value;
-    DrawWord(word, x, y + num * (Style::TileSize + Style::SmallMargin));
+    DrawWord(word, x, y + num * (Style::TileSize + Style::SmallMargin), m_TargetWord->GetLength());
     num++;
   }
   
