@@ -7,36 +7,6 @@
 namespace ltrm
 {
 
-// NOTE: This code really shouldn't be run server side, and the
-// changing of the text file could potentially lead to a security
-// issue.
-
-// Returns
-// 0 if word1 and word2 are equal
-// -1 if word1 comes before word2
-// 1 if word2 comes before word1
-static int alphaCmp(const char* word1, const char* word2)
-{
-  unsigned long length1 = strlen(word1);
-  unsigned long length2 = strlen(word2);
-  unsigned long length = length1 < length2 ? length1 : length2;
-  
-  for (int i = 0; i < length; i++)
-  {
-    char c1 = SDL_toupper(word1[i]);
-    char c2 = SDL_toupper(word2[i]);
-    if (c1 == c2) continue;
-    return c1 < c2 ? -1 : 1;
-  }
-  
-  if (length1 == length2)
-    return 0;
-  else if (length1 > length2)
-    return 1;
-  else
-    return -1;
-}
-
 std::vector<std::string> Dictionary::s_Words;
 
 void Dictionary::Init()
@@ -73,6 +43,7 @@ void Dictionary::Init()
     std::string s(token);
     s.pop_back();
     s_Words.push_back(s);
+    
     // Get the next word
     token = strtok(nullptr, delim);
   }
@@ -82,7 +53,7 @@ void Dictionary::Shutdown()
 {
 }
 
-bool Dictionary::CheckWord(const char *word)
+bool Dictionary::CheckWord(const std::string& word)
 {
   // Employ binary search to check if word is in the dictionary
   float searchRange = s_Words.size() / 2;
@@ -91,7 +62,7 @@ bool Dictionary::CheckWord(const char *word)
   std::string dictWord = s_Words[index];
   for (;;)
   {
-    int direction = alphaCmp(word, dictWord.c_str());
+    int direction = AlphaCompare(word, dictWord);
     if (direction == 0) return true; // If the words are equal
     
     searchRange /= 2;
@@ -103,9 +74,32 @@ bool Dictionary::CheckWord(const char *word)
   return false;
 }
 
-int Dictionary::AlphaCompare(const char *word1, const char *word2)
+
+// Returns
+// 0 if word1 and word2 are equal
+// -1 if word1 comes before word2
+// 1 if word2 comes before word1
+
+int Dictionary::AlphaCompare(const std::string& word1, const std::string& word2)
 {
-  return alphaCmp(word1, word2);
+  size_t length1 = word1.length();
+  size_t length2 = word2.length();
+  size_t length = length1 < length2 ? length1 : length2;
+  
+  for (size_t i = 0; i < length; i++)
+  {
+    char c1 = SDL_toupper(word1[i]);
+    char c2 = SDL_toupper(word2[i]);
+    if (c1 == c2) continue;
+    return c1 < c2 ? -1 : 1;
+  }
+  
+  if (length1 == length2)
+    return 0;
+  else if (length1 > length2)
+    return 1;
+  else
+    return -1;
 }
 
 }

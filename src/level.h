@@ -1,9 +1,9 @@
 #pragma once
 
 #include "scene.h"
-#include "word.h"
 
 #include <vector>
+#include <string>
 
 namespace ltrm
 {
@@ -22,8 +22,8 @@ public:
   static void SetLevel(int level);
   
 private:
-  std::vector<Word*> m_Words;
-  Word* m_TargetWord;
+  std::vector<std::string> m_Words;
+  std::string m_TargetWord;
   bool m_Won = false;
   
   int m_ShakeAnimation;

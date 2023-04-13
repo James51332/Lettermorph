@@ -1,7 +1,6 @@
 #pragma once
 
 #include "window.h"
-#include "word.h"
 
 #include <SDL3/SDL.h>
 

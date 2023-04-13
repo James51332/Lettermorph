@@ -62,11 +62,6 @@ void UI::Text(const char* text, float x, float y, float scale)
   // This system should be fine because our app is very ui light.
   TextTexture* textTexture;
   
-  if (Input::KeyPress(SDLK_a))
-  {
-    SDL_Log("test");
-  }
-  
   if (s_TextTextures.find(text) == s_TextTextures.end())
   {
     SDL_Surface* surface = TTF_RenderText_Blended(s_Font, text, Color::Light);
@@ -92,6 +87,33 @@ void UI::Text(const char* text, float x, float y, float scale)
   Renderer::Image(textTexture->Texture, x - sw/2, y - sh/2, sw, sh);
 }
 
+void UI::TiledText(const std::string& word, float x, float y, size_t size)
+{
+  if (size == 0) // Center if the word is not given with a length
+  {
+    x -= TiledTextWidth(word.length()) / 2;
+    size = word.length();
+  }
+  
+  for (int i = 0; i < size; i++)
+  {
+    float centerX = x + Style::TileSize / 2;
+    float centerY = y + Style::TileSize / 2;
+    
+    Renderer::NoStroke();
+    Renderer::Fill(Color::Dark);
+    Renderer::Rect(x, y, Style::TileSize, Style::TileSize);
+    
+    if (i < word.length())
+    {
+      char c = word[i];
+      Renderer::Letter(c, centerX - Style::LetterSize / 2, centerY - Style::LetterSize/2, Style::LetterSize);
+    }
+    
+    x += Style::TileSize + Style::SmallMargin;
+  }
+}
+
 void UI::TextSize(const char* text, float* w, float* h, float scale)
 {
   int tw, th;
@@ -100,6 +122,12 @@ void UI::TextSize(const char* text, float* w, float* h, float scale)
   if (w) (*w) = static_cast<float>(static_cast<float>(tw) * scale);
   if (h) (*h) = static_cast<float>(static_cast<float>(th) * scale);
 }
+
+float UI::TiledTextWidth(size_t length)
+{
+  return length * (Style::TileSize + Style::SmallMargin) - Style::SmallMargin;
+}
+
 
 void UI::ButtonSize(const char* text, float* w, float* h, bool large)
 {

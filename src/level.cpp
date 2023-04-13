@@ -41,43 +41,11 @@ void LevelScene::SetLevel(int level)
 
 void LevelScene::Load()
 {
-  m_TargetWord = new Word("HARP");
-  m_Words.push_back(new Word("MILE"));
-  m_Words.push_back(new Word(""));
+  m_TargetWord = std::string("HARP");
+  m_Words.push_back(std::string("MILE"));
+  m_Words.push_back(std::string(""));
   
   m_ScrollOffset = 0;
-}
-
-static float WordWidth(size_t length)
-{
-  return length * (Style::TileSize + Style::SmallMargin) - Style::SmallMargin;
-}
-
-static void DrawWord(Word* word, float x, float y, size_t size = 0)
-{
-  if (size == 0)
-  {
-    x -= WordWidth(word->GetLength()) / 2;
-    size = word->GetLength();
-  }
-  
-  for (int i = 0; i < size; i++)
-  {
-    float centerX = x + Style::TileSize / 2;
-    float centerY = y + Style::TileSize / 2;
-    
-    Renderer::NoStroke();
-    Renderer::Fill(Color::Dark);
-    Renderer::Rect(x, y, Style::TileSize, Style::TileSize);
-    
-    if (i < word->GetLength())
-    {
-      char c = word->operator[](i);
-      Renderer::Letter(c, centerX - Style::LetterSize / 2, centerY - Style::LetterSize/2, Style::LetterSize);
-    }
-    
-    x += Style::TileSize + Style::SmallMargin;
-  }
 }
 
 void LevelScene::Update()
@@ -97,19 +65,19 @@ void LevelScene::Update()
   
   // Draw working words
   float y = Style::SmallMargin - m_ScrollOffset - Animator::QueryAnimation(m_ScrollAnimation).Value;
-  float x = (Renderer::GetWidth() - WordWidth(m_TargetWord->GetLength())) / 2;
+  float x = (Renderer::GetWidth() - UI::TiledTextWidth(m_TargetWord.length())) / 2;
   int num = 0;
-  for (auto* word : m_Words)
+  for (auto& word : m_Words)
   {
     if (num == m_Words.size() - 1) x += Animator::QueryAnimation(m_ShakeAnimation).Value;
-    DrawWord(word, x, y + num * (Style::TileSize + Style::SmallMargin), m_TargetWord->GetLength());
+    UI::TiledText(word, x, y + num * (Style::TileSize + Style::SmallMargin), m_TargetWord.length());
     num++;
   }
   
   // Draw target words
   x = Renderer::GetWidth() / 2;
   y = Renderer::GetHeight() - (Style::TileSize + Style::SmallMargin);
-  DrawWord(m_TargetWord, x, y);
+  UI::TiledText(m_TargetWord, x, y);
   
   // Win Screen
   if (m_Won)
@@ -141,12 +109,10 @@ void LevelScene::Update()
 void LevelScene::Unload()
 {
   while (!m_Words.empty())
-  {
-    Word* last = m_Words[m_Words.size() - 1];
     m_Words.pop_back();
-    delete last;
-  }
-  delete m_TargetWord;
+  
+  m_TargetWord = std::string("");
+  
   m_Won = false;
 }
 
@@ -154,15 +120,16 @@ void LevelScene::KeyDown(SDL_Keycode key)
 {
   if (m_Won) return;
   
-  Word* lastWord = m_Words[m_Words.size()-1];
+  std::string& lastWord = m_Words[m_Words.size() -1];
   if (isalpha(key))
   {
-    if (lastWord->GetLength() < m_TargetWord->GetLength())
-    	lastWord->PushChar(key);
+    if (lastWord.length() < m_TargetWord.length())
+    	lastWord.push_back(key);
   }
   else if (key == SDLK_BACKSPACE)
   {
-    lastWord->PopChar();
+    if (lastWord.length() > 0)
+    	lastWord.pop_back();
   }
   else if (key == SDLK_RETURN)
   {
@@ -170,16 +137,16 @@ void LevelScene::KeyDown(SDL_Keycode key)
     
     // We need to check if the word is valid
     {
-    	if (lastWord->GetLength() != m_TargetWord->GetLength()) valid = false;
-      if (!Dictionary::CheckWord(lastWord->GetValue())) valid = false;
+    	if (lastWord.length() != m_TargetWord.length()) valid = false;
+      if (!Dictionary::CheckWord(lastWord.c_str())) valid = false;
     	
-      Word* previous = m_Words[m_Words.size() - 2];
-    	size_t length = lastWord->GetLength();
+      std::string previous = m_Words[m_Words.size() - 2];
+    	size_t length = lastWord.length();
     	size_t differences = 0;
     	for (size_t i = 0; i < length; i++)
     	{
-    	    char c1 = SDL_toupper(lastWord->GetValue()[i]);
-    	    char c2 = SDL_toupper(previous->GetValue()[i]);
+    	    char c1 = SDL_toupper(lastWord[i]);
+    	    char c2 = SDL_toupper(previous[i]);
     	    if (c1 != c2) differences++;
     	}
       if (differences != 1) valid = false;
@@ -191,16 +158,17 @@ void LevelScene::KeyDown(SDL_Keycode key)
       return;
     }
     
-    // If we won, finished with level!
-    if (Dictionary::AlphaCompare(lastWord->GetValue(), m_TargetWord->GetValue()) == 0)
+    // If we won, finished with level
+    if (Dictionary::AlphaCompare(lastWord, m_TargetWord) == 0)
     {
       m_Won = true;
       return;
     }
     
     // Append a new word to the back
-    m_Words.push_back(new Word(""));
+    m_Words.push_back(std::string(""));
     
+    // TODO: Adjust to window size
     if (m_Words.size() > 5)
     {
       Animator::SetAnimationActive(m_ScrollAnimation);

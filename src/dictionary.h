@@ -1,7 +1,5 @@
 #pragma once
 
-#include "word.h"
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -21,8 +19,8 @@ public:
   static void Init();
   static void Shutdown();
   
-  static bool CheckWord(const char* word);
-  static int AlphaCompare(const char* word1, const char* word2);
+  static bool CheckWord(const std::string& word);
+  static int AlphaCompare(const std::string& word1, const std::string& word2);
   
 private:
   static std::vector<std::string> s_Words;

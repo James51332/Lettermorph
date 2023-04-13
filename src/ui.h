@@ -21,8 +21,10 @@ public:
   static bool Button(const char*, float, float, float, float, float scale); // Button with fixed size
   
   static void Text(const char*, float, float, float scale);
+  static void TiledText(const std::string&, float, float, size_t size = 0); // We use std::string here before
   
   static void TextSize(const char*, float*, float*, float scale);
+  static float TiledTextWidth(size_t length);
   static void ButtonSize(const char*, float*, float*, bool large);
   
 private:
