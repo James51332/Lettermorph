@@ -34,6 +34,9 @@ public:
 private:
   static std::unordered_map<std::string, Scene*> s_SceneMap;
   static Scene* s_ActiveScene;
+  
+  static bool s_ChangeRequested;
+  static std::string s_ChangeKey;
 };
 
 }

@@ -33,7 +33,7 @@ void Dictionary::Init()
   char* token = strtok(&data[0], delim);
   while (token != nullptr)
   {
-    // Convert each word from dictionary to lower case
+    // Convert each word from dictionary to upper case
     for (int i = 0; i < strlen(token); ++i)
     {
       char word = toupper(token[i]);

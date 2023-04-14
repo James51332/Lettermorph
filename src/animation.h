@@ -16,7 +16,8 @@ namespace ltrm
 enum class AnimationType
 {
 	Lerp,
-  Wave
+  Wave,
+  Pulse
 };
 
 struct Animation
@@ -41,6 +42,7 @@ struct ColorAnimation
   bool Active = false;
   bool ResetOnInactive = true;
   bool ResetOnComplete = false;
+  bool Loop = false;
   
   SDL_Color Value = {0, 0, 0, 255};
   float Progress = 0;

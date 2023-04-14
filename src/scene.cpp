@@ -8,6 +8,9 @@ namespace ltrm
 std::unordered_map<std::string, Scene*> SceneManager::s_SceneMap;
 Scene* SceneManager::s_ActiveScene = nullptr;
 
+bool SceneManager::s_ChangeRequested;
+std::string SceneManager::s_ChangeKey;
+
 void SceneManager::Init(Scene *scene, std::string key)
 {
 	s_ActiveScene = scene;
@@ -31,17 +34,29 @@ void SceneManager::AddScene(Scene *scene, std::string key)
 
 void SceneManager::ChangeScene(std::string key)
 {
-  Scene* scene = s_SceneMap.at(key);
-  if (!scene) return;
-  
-  s_ActiveScene->Unload();
-  s_ActiveScene = scene;
-  s_ActiveScene->Load();
+  s_ChangeRequested = true;
+  s_ChangeKey = key;
 }
 
 void SceneManager::Update()
 {
   s_ActiveScene->Update();
+  
+  if (s_ChangeRequested)
+  {
+    s_ChangeRequested = false;
+    
+    Scene* scene = s_SceneMap.at(s_ChangeKey);
+    if (!scene)
+    {
+      SDL_Log("Unknown Scene! (%s)", s_ChangeKey.c_str());
+      return;
+    }
+    
+    s_ActiveScene->Unload();
+    s_ActiveScene = scene;
+    s_ActiveScene->Load();
+  }
 }
 
 void SceneManager::KeyDown(SDL_Keycode key)

@@ -24,7 +24,10 @@ public:
 private:
   std::vector<std::string> m_Words;
   std::string m_TargetWord;
+  size_t m_WordLength = 0;
+  
   bool m_Won = false;
+  static int s_Level;
   
   int m_ShakeAnimation;
   

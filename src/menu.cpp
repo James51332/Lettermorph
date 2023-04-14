@@ -11,9 +11,9 @@ namespace ltrm
 MenuScene::MenuScene()
 {
   Animation titleAnim;
-  titleAnim.Min = 300;
-  titleAnim.Max = Renderer::GetWidth() - 300;
-  titleAnim.Duration = 1;
+  titleAnim.Min = -300;
+  titleAnim.Max = 300;
+  titleAnim.Duration = 0.5;
   titleAnim.Type = AnimationType::Wave;
   titleAnim.ResetOnComplete = true;
   titleAnim.Loop = false;
@@ -43,16 +43,18 @@ void MenuScene::Update()
   {
     if (Input::KeyPress(SDLK_a)) Animator::SetAnimationActive(m_TitleAnimID);
     
-    float x = Animator::QueryAnimation(m_TitleAnimID).Value;
-    UI::Text("Lettermorph", x, 200, 1.0f);
+    float x = Renderer::GetWidth() / 2 + Animator::QueryAnimation(m_TitleAnimID).Value;
+    float y = Style::SmallMargin + Style::TileSize / 2;
+    UI::TiledText(std::string("Letter"), x, y);
+    UI::TiledText(std::string("morph"), x, y + Style::TileSize + Style::SmallMargin);
   }
   
-  if (UI::Button("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2, 300, 200, true))
+  if (UI::Button("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2, 400, 150, true))
   {
     SceneManager::ChangeScene("level");
   }
   
-  if (UI::Button("Level", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2 + 200 + Style::SmallMargin, 300, 200, true))
+  if (UI::Button("Level", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2 + 150 + Style::SmallMargin, 400, 150, true))
   {
     SceneManager::ChangeScene("selection");
   }

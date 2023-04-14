@@ -7,9 +7,46 @@
 #include "animation.h"
 
 #include <SDL3/SDL.h>
+#include <cstring>
 
 namespace ltrm
 {
+
+// 25 Levels and Solutions (not necessarily optimal/only)
+static constexpr size_t numLevels = 25;
+static constexpr const char* levels[] = {
+  "CAT-BAR", // CAT -> CAR -> BAR
+  "RATE-LAME", // RATE -> LATE -> LAME
+  "RATE-LAME", // RATE -> LATE -> LAME
+  "RATE-LAME", // RATE -> LATE -> LAME
+  "RATE-LAME", // RATE -> LATE -> LAME
+  "RATE-LAME",
+  "MAGIC-PANIC", // MAGIC -> MANIC -> PANIC
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "MILE-HARE", // MILE -> MALE -> MARE -> HARE -> HARP
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "SPACE-SHORT", // SPACE -> SPARE -> SPORE -> SHORE -> SHORT
+  "BRIM-TICK",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME",
+  "RATE-LAME"
+};
+
+int LevelScene::s_Level = 1;
 
 LevelScene::LevelScene()
 {
@@ -20,7 +57,7 @@ LevelScene::LevelScene()
   shake.Loop = false;
   shake.Duration = 0.2;
   m_ShakeAnimation = Animator::RegisterAnimation(shake);
-
+  
   Animation scroll;
   scroll.Type = AnimationType::Lerp;
   scroll.Min = 0;
@@ -36,13 +73,30 @@ LevelScene::~LevelScene()
 
 void LevelScene::SetLevel(int level)
 {
+  if (level < 1 || level > numLevels)
+  {
+    SDL_Log("Level exceeds max range! (%d)", level);
+    return;
+  }
   
+  s_Level = level;
 }
 
 void LevelScene::Load()
 {
-  m_TargetWord = std::string("HARP");
-  m_Words.push_back(std::string("MILE"));
+  std::string levelString = levels[s_Level - 1];
+  const char* delim = "-";
+  
+  char* token = strtok(&levelString[0], delim);
+  m_TargetWord = std::string(token);
+  m_WordLength = m_TargetWord.length();
+  
+  token = strtok(nullptr, delim);
+  while (token != nullptr)
+  {
+    m_Words.push_back(std::string(token));
+    token = strtok(nullptr, delim);
+  }
   m_Words.push_back(std::string(""));
   
   m_ScrollOffset = 0;
@@ -65,12 +119,12 @@ void LevelScene::Update()
   
   // Draw working words
   float y = Style::SmallMargin - m_ScrollOffset - Animator::QueryAnimation(m_ScrollAnimation).Value;
-  float x = (Renderer::GetWidth() - UI::TiledTextWidth(m_TargetWord.length())) / 2;
+  float x = (Renderer::GetWidth() - UI::TiledTextWidth(m_WordLength)) / 2;
   int num = 0;
   for (auto& word : m_Words)
   {
     if (num == m_Words.size() - 1) x += Animator::QueryAnimation(m_ShakeAnimation).Value;
-    UI::TiledText(word, x, y + num * (Style::TileSize + Style::SmallMargin), m_TargetWord.length());
+    UI::TiledText(word, x, y + num * (Style::TileSize + Style::SmallMargin), m_WordLength, num == m_Words.size() - 1);
     num++;
   }
   
@@ -97,11 +151,16 @@ void LevelScene::Update()
     UI::TextSize("You Won!", nullptr, &textHeight, 1.0f);
     UI::Text("You Won!", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
     
-    float btnWidth, btnHeight;
-    UI::ButtonSize("Back", &btnWidth, &btnHeight, false);
-    if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, false))
+    float btnWidth = 200, btnHeight = 100;
+    if (UI::Button("Back", Renderer::GetWidth() / 2 - Style::SmallMargin / 2 - btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
     {
       SceneManager::ChangeScene("main");
+    }
+    
+    if (UI::Button("Next", Renderer::GetWidth() / 2 + Style::SmallMargin / 2 + btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
+    {
+      if (s_Level < numLevels) s_Level++;
+      SceneManager::ChangeScene("level");
     }
   }
 }
@@ -123,21 +182,25 @@ void LevelScene::KeyDown(SDL_Keycode key)
   std::string& lastWord = m_Words[m_Words.size() -1];
   if (isalpha(key))
   {
-    if (lastWord.length() < m_TargetWord.length())
-    	lastWord.push_back(key);
+    if (lastWord.length() < m_WordLength)
+    {
+      lastWord.push_back(key);
+      UI::PulseLastTile();
+    }
   }
   else if (key == SDLK_BACKSPACE)
   {
     if (lastWord.length() > 0)
-    	lastWord.pop_back();
+    {
+      lastWord.pop_back();
+    }
   }
   else if (key == SDLK_RETURN)
   {
-    bool valid = true;
-    
     // We need to check if the word is valid
+    bool valid = true;    
     {
-    	if (lastWord.length() != m_TargetWord.length()) valid = false;
+    	if (lastWord.length() != m_WordLength) valid = false;
       if (!Dictionary::CheckWord(lastWord.c_str())) valid = false;
     	
       std::string previous = m_Words[m_Words.size() - 2];

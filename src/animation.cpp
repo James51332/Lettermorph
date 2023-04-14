@@ -56,7 +56,14 @@ void Animator::ResetAnimation(int ID)
     }
     case AnimationType::Wave:
     {
-      // TODO
+      anim.Progress = 0;
+      anim.Value = anim.Min + anim.Max;
+      break;
+    }
+    case AnimationType::Pulse:
+    {
+      anim.Progress = 0;
+      anim.Value = anim.Min;
       break;
     }
   }
@@ -139,9 +146,37 @@ static void waveUpdate(Animation& animation, float timestep)
   }
 }
 
+static void pulseUpdate(Animation& animation, float timestep)
+{
+  if (!animation.Active)
+  {
+    if (!animation.ResetOnInactive && animation.Progress < 1) return;
+    if (!animation.ResetOnComplete && animation.Progress == 1) return;
+    
+    animation.Value = (animation.Min) / 2;
+    animation.Progress = 0;
+  } else
+  {
+    animation.Progress += timestep / animation.Duration;
+    animation.Value = animation.Min + (SDL_sinf(animation.Progress * 3.1415f) * (animation.Max - animation.Min));
+    
+    if (animation.Progress >= 1)
+    {
+      animation.Value = (animation.Max + animation.Min) / 2;
+      if (!animation.Loop)
+      {
+        animation.Active = false;
+        animation.Progress = 0;
+      } else
+      {
+        animation.Progress = 0;
+      }
+    }
+  }
+}
+
 static void colorUpdate(ColorAnimation& animation, float timestep)
 {
-  // TODO
 }
 
 void Animator::Update(float timestep)
@@ -158,6 +193,11 @@ void Animator::Update(float timestep)
       case AnimationType::Wave:
       {
         waveUpdate(animation, timestep);
+        break;
+      }
+      case AnimationType::Pulse:
+      {
+        pulseUpdate(animation, timestep);
         break;
       }
       default: break;

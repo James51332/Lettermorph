@@ -2,9 +2,9 @@
 #include "style.h"
 #include "renderer.h"
 #include "ui.h"
+#include "level.h"
 
 #include <string>
-
 namespace ltrm
 {
 
@@ -48,7 +48,11 @@ void SelectionScene::Update()
     {
       int num = i * 5 + j + 1;
       std::string s = std::to_string(num);
-      UI::Button(s.c_str(), x, y, size, size, 0.6f);
+      if (UI::Button(s.c_str(), x, y, size, size, 0.6f))
+      {
+        LevelScene::SetLevel(num);
+        SceneManager::ChangeScene("level");
+      }
       
       x += size + margin;
     }

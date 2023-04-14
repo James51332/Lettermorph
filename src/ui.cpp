@@ -2,6 +2,7 @@
 #include "input.h"
 #include "renderer.h"
 #include "style.h"
+#include "animation.h"
 
 #include <SDL3/SDL_ttf.h>
 
@@ -11,6 +12,8 @@ namespace ltrm
 TTF_Font* UI::s_Font;
 std::unordered_map<std::string, UI::TextTexture*> UI::s_TextTextures;
 
+int UI::s_PulseAnimation;
+
 void UI::Init()
 {
 	s_Font = TTF_OpenFont("resources/Arial.ttf", 80);
@@ -18,6 +21,14 @@ void UI::Init()
   {
     SDL_Log("Failed to load font: %s", TTF_GetError());
   }
+  
+  Animation pulse;
+  pulse.Type = AnimationType::Pulse;
+  pulse.Min = 0;
+  pulse.Max = 10;
+  pulse.Loop = false;
+  pulse.Duration = 0.1;
+  s_PulseAnimation = Animator::RegisterAnimation(pulse);
 }
 
 void UI::Shutdown()
@@ -87,7 +98,7 @@ void UI::Text(const char* text, float x, float y, float scale)
   Renderer::Image(textTexture->Texture, x - sw/2, y - sh/2, sw, sh);
 }
 
-void UI::TiledText(const std::string& word, float x, float y, size_t size)
+void UI::TiledText(const std::string& word, float x, float y, size_t size, bool last)
 {
   if (size == 0) // Center if the word is not given with a length
   {
@@ -100,18 +111,34 @@ void UI::TiledText(const std::string& word, float x, float y, size_t size)
     float centerX = x + Style::TileSize / 2;
     float centerY = y + Style::TileSize / 2;
     
+    float pulse = Animator::QueryAnimation(s_PulseAnimation).Value;
+    float letterSize;
+    if (last && i == word.length() - 1)
+      letterSize = Style::LetterSize + pulse;
+    else
+      letterSize = Style::LetterSize;
+    
     Renderer::NoStroke();
     Renderer::Fill(Color::Dark);
-    Renderer::Rect(x, y, Style::TileSize, Style::TileSize);
     
+    if (last && i == word.length() - 1)
+    	Renderer::Rect(x - pulse / 2, y - pulse / 2, Style::TileSize + pulse, Style::TileSize + pulse);
+    else
+      Renderer::Rect(x, y, Style::TileSize, Style::TileSize);
+      
     if (i < word.length())
     {
       char c = word[i];
-      Renderer::Letter(c, centerX - Style::LetterSize / 2, centerY - Style::LetterSize/2, Style::LetterSize);
+      Renderer::Letter(c, centerX - letterSize / 2, centerY - letterSize / 2, letterSize);
     }
     
     x += Style::TileSize + Style::SmallMargin;
   }
+}
+
+void UI::PulseLastTile()
+{
+  Animator::SetAnimationActive(s_PulseAnimation);
 }
 
 void UI::TextSize(const char* text, float* w, float* h, float scale)
