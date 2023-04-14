@@ -21,8 +21,15 @@ public:
   static bool Button(const char*, float, float, float, float, float scale); // Button with fixed size
   
   static void Text(const char*, float, float, float scale);
-  static void TiledText(const std::string&, float, float, size_t size = 0, bool last = false); // We use std::string here before
+  
+  // Pulse Types:
+  // 0 => Don't pulse
+  // 1 => Pulse last tile
+  // 1 => Pulse all tiles along word
+  static void TiledText(const std::string&, float, float, int pulseType = 0, size_t size = 0);
+  
   static void PulseLastTile();
+  static void PulseTiles(float delay = 0.0f);
   
   static void TextSize(const char*, float*, float*, float scale);
   static float TiledTextWidth(size_t length);
@@ -41,7 +48,8 @@ private:
   static std::unordered_map<std::string, TextTexture*> s_TextTextures;
   static TTF_Font* s_Font;
   
-  static int s_PulseAnimation;
+  // This will enable us to do cascaded pulses
+  static std::vector<int> s_PulseAnimations;
 };
 
 }

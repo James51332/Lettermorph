@@ -12,7 +12,7 @@ namespace ltrm
 TTF_Font* UI::s_Font;
 std::unordered_map<std::string, UI::TextTexture*> UI::s_TextTextures;
 
-int UI::s_PulseAnimation;
+std::vector<int> UI::s_PulseAnimations;
 
 void UI::Init()
 {
@@ -28,7 +28,8 @@ void UI::Init()
   pulse.Max = 10;
   pulse.Loop = false;
   pulse.Duration = 0.1;
-  s_PulseAnimation = Animator::RegisterAnimation(pulse);
+  for (size_t i = 0; i < 10; i++)
+    s_PulseAnimations.push_back(Animator::RegisterAnimation(pulse));
 }
 
 void UI::Shutdown()
@@ -98,7 +99,7 @@ void UI::Text(const char* text, float x, float y, float scale)
   Renderer::Image(textTexture->Texture, x - sw/2, y - sh/2, sw, sh);
 }
 
-void UI::TiledText(const std::string& word, float x, float y, size_t size, bool last)
+void UI::TiledText(const std::string& word, float x, float y, int pulseType, size_t size)
 {
   if (size == 0) // Center if the word is not given with a length
   {
@@ -111,20 +112,22 @@ void UI::TiledText(const std::string& word, float x, float y, size_t size, bool 
     float centerX = x + Style::TileSize / 2;
     float centerY = y + Style::TileSize / 2;
     
-    float pulse = Animator::QueryAnimation(s_PulseAnimation).Value;
-    float letterSize;
-    if (last && i == word.length() - 1)
-      letterSize = Style::LetterSize + pulse;
-    else
-      letterSize = Style::LetterSize;
-    
     Renderer::NoStroke();
     Renderer::Fill(Color::Dark);
     
-    if (last && i == word.length() - 1)
+    float letterSize, pulse;
+    if (pulseType == 2 || (pulseType == 1 && i == word.length() - 1))
+    {
+      size_t pulseIndex = pulseType == 1 ? 0 : i;
+      pulse = Animator::QueryAnimation(s_PulseAnimations[pulseIndex]).Value;
+      letterSize = Style::LetterSize + pulse;
     	Renderer::Rect(x - pulse / 2, y - pulse / 2, Style::TileSize + pulse, Style::TileSize + pulse);
+    }
     else
+    {
+      letterSize = Style::LetterSize;
       Renderer::Rect(x, y, Style::TileSize, Style::TileSize);
+    }
       
     if (i < word.length())
     {
@@ -138,7 +141,16 @@ void UI::TiledText(const std::string& word, float x, float y, size_t size, bool 
 
 void UI::PulseLastTile()
 {
-  Animator::SetAnimationActive(s_PulseAnimation);
+  Animator::SetAnimationActive(s_PulseAnimations[0]);
+}
+
+void UI::PulseTiles(float delay)
+{
+  for (auto id : s_PulseAnimations)
+  {
+    Animator::QueueAnimationActive(id, delay);
+    delay += 0.08f;
+  }
 }
 
 void UI::TextSize(const char* text, float* w, float* h, float scale)

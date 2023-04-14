@@ -20,6 +20,8 @@ public:
   
 private:
   int m_TitleAnimID;
+  float m_StartTime = 0;
+  bool m_Pulsed = false;
 };
 
 }

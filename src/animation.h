@@ -62,6 +62,9 @@ public:
   
   static void SetAnimationActive(int ID, bool active = true);
   static void SetColorAnimationActive(int ID, bool active = true);
+  static void QueueAnimationActive(int ID, float delay);
+  static void QueueColorAnimationActive(int ID, float delay);
+  
   static void ResetAnimation(int ID);
   static void ResetColorAnimation(int ID);
   
@@ -77,6 +80,14 @@ private:
   // It should be fine to store these by value (copy only occurs on register)
   static std::vector<Animation> s_Animations;
   static std::vector<ColorAnimation> s_ColorAnimations;
+  
+  struct QueuedAnimation
+  {
+    int ID;
+    float Delay;
+  };
+  static std::vector<QueuedAnimation> s_QueuedAnimations;
+  static std::vector<QueuedAnimation> s_QueuedColorAnimations;
 };
 
 }

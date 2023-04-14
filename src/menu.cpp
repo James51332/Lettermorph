@@ -4,6 +4,7 @@
 #include "style.h"
 #include "animation.h"
 #include "input.h"
+#include "game.h"
 
 namespace ltrm
 {
@@ -28,7 +29,7 @@ MenuScene::~MenuScene()
 
 void MenuScene::Load()
 {
-  
+  m_StartTime = SDL_GetTicks();
 }
 
 void MenuScene::Unload()
@@ -38,6 +39,13 @@ void MenuScene::Unload()
 
 void MenuScene::Update()
 {
+  float activeTime = SDL_GetTicks() - m_StartTime;
+  if (!m_Pulsed && activeTime >= 2000.0f)
+  {
+    m_Pulsed = true;
+    UI::PulseTiles();
+  }
+  
   Renderer::Clear(Color::Accent);
   
   {
@@ -45,18 +53,18 @@ void MenuScene::Update()
     
     float x = Renderer::GetWidth() / 2 + Animator::QueryAnimation(m_TitleAnimID).Value;
     float y = Style::SmallMargin + Style::TileSize / 2;
-    UI::TiledText(std::string("Letter"), x, y);
-    UI::TiledText(std::string("morph"), x, y + Style::TileSize + Style::SmallMargin);
+    UI::TiledText(std::string("Letter"), x, y, 2);
+    UI::TiledText(std::string("morph"), x, y + Style::TileSize + Style::SmallMargin, 2);
   }
   
   if (UI::Button("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2, 400, 150, true))
   {
-    SceneManager::ChangeScene("level");
+    SceneManager::ChangeScene("selection");
   }
   
-  if (UI::Button("Level", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2 + 150 + Style::SmallMargin, 400, 150, true))
+  if (UI::Button("Quit", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2 + 150 + Style::SmallMargin, 400, 150, true))
   {
-    SceneManager::ChangeScene("selection");
+    Game::GetInstance()->Stop();
   }
 }
 

@@ -124,7 +124,7 @@ void LevelScene::Update()
   for (auto& word : m_Words)
   {
     if (num == m_Words.size() - 1) x += Animator::QueryAnimation(m_ShakeAnimation).Value;
-    UI::TiledText(word, x, y + num * (Style::TileSize + Style::SmallMargin), m_WordLength, num == m_Words.size() - 1);
+    UI::TiledText(word, x, y + num * (Style::TileSize + Style::SmallMargin), num == m_Words.size() - 1 ? 1 : 0, m_WordLength);
     num++;
   }
   
@@ -224,6 +224,7 @@ void LevelScene::KeyDown(SDL_Keycode key)
     // If we won, finished with level
     if (Dictionary::AlphaCompare(lastWord, m_TargetWord) == 0)
     {
+      UI::PulseTiles(0.25f);
       m_Won = true;
       return;
     }

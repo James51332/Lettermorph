@@ -1,6 +1,5 @@
 #include "animation.h"
 
-
 namespace ltrm
 {
 
@@ -10,9 +9,11 @@ int Animator::s_CurrentColorID = 0;
 std::vector<Animation> Animator::s_Animations;
 std::vector<ColorAnimation> Animator::s_ColorAnimations;
 
+std::vector<Animator::QueuedAnimation> Animator::s_QueuedAnimations;
+std::vector<Animator::QueuedAnimation> Animator::s_QueuedColorAnimations;
+
 void Animator::Init()
 {
-  
 }
 
 void Animator::Shutdown()
@@ -40,6 +41,16 @@ void Animator::SetAnimationActive(int ID, bool active)
 void Animator::SetColorAnimationActive(int ID, bool active)
 {
   s_ColorAnimations[ID].Active = active;
+}
+
+void Animator::QueueAnimationActive(int ID, float delay)
+{
+  s_QueuedAnimations.push_back({ID, delay});
+}
+
+void Animator::QueueColorAnimationActive(int ID, float delay)
+{
+  s_QueuedColorAnimations.push_back({ID, delay});
 }
 
 void Animator::ResetAnimation(int ID)
@@ -181,6 +192,33 @@ static void colorUpdate(ColorAnimation& animation, float timestep)
 
 void Animator::Update(float timestep)
 {
+  // Activate Queued Animations
+  size_t index = 0;
+  for (auto& animation : s_QueuedAnimations)
+  {
+    animation.Delay -= timestep;
+    if (animation.Delay <= 0.0f)
+    {
+      SetAnimationActive(animation.ID);
+      s_QueuedAnimations.erase(s_QueuedAnimations.begin() + index); // Not the best, but it's find
+    }
+    
+    index++;
+  }
+  
+  for (auto& animation : s_QueuedColorAnimations)
+  {
+    animation.Delay -= timestep;
+    if (animation.Delay <= 0.0f)
+    {
+      SetColorAnimationActive(animation.ID);
+      s_QueuedAnimations.erase(s_QueuedAnimations.begin() + index); // Not the best, but it's find
+    }
+    
+    index++;
+  }
+  
+  // Update Active Animations
   for (auto& animation : s_Animations)
   {
     switch (animation.Type)
