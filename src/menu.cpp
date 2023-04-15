@@ -39,6 +39,8 @@ void MenuScene::Unload()
 
 void MenuScene::Update()
 {
+  Renderer::Clear(Color::Accent);
+  
   float activeTime = SDL_GetTicks() - m_StartTime;
   if (!m_Pulsed && activeTime >= 2000.0f)
   {
@@ -46,8 +48,7 @@ void MenuScene::Update()
     UI::PulseTiles();
   }
   
-  Renderer::Clear(Color::Accent);
-  
+  // TITLE
   {
     if (Input::KeyPress(SDLK_a)) Animator::SetAnimationActive(m_TitleAnimID);
     
@@ -57,12 +58,22 @@ void MenuScene::Update()
     UI::TiledText(std::string("morph"), x, y + Style::TileSize + Style::SmallMargin, 2);
   }
   
-  if (UI::Button("Play", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2, 400, 150, true))
+  constexpr float btnWidth = 600;
+  constexpr float btnHeight = 120;
+  
+  constexpr float layoutWidth = btnWidth;
+  constexpr float smallBtnWidth = (layoutWidth - Style::SmallMargin) / 2;
+  
+  if (UI::Button("Play", Renderer::GetWidth() / 2, (Renderer::GetHeight() - Style::SmallMargin - btnHeight) / 2, btnWidth, btnHeight, true))
   {
     SceneManager::ChangeScene("selection");
   }
   
-  if (UI::Button("Quit", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2 + 150 + Style::SmallMargin, 400, 150, true))
+  if (UI::Button("Levels", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, true))
+  {
+  }
+  
+  if (UI::Button("Quit", (Renderer::GetWidth() + layoutWidth - smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, true))
   {
     Game::GetInstance()->Stop();
   }

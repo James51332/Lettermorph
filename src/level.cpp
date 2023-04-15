@@ -15,35 +15,36 @@ namespace ltrm
 // 25 Levels and Solutions (not necessarily optimal/only)
 static constexpr size_t numLevels = 25;
 static constexpr const char* levels[] = {
+  // EASY
   "CAT-BAR", // CAT -> CAR -> BAR
   "RATE-LAME", // RATE -> LATE -> LAME
-  "RATE-LAME", // RATE -> LATE -> LAME
-  "RATE-LAME", // RATE -> LATE -> LAME
-  "RATE-LAME", // RATE -> LATE -> LAME
-  "RATE-LAME",
+  "PANT-PART", //
+  "RATE-LAME", //
+  "RATE-LAME", //
+  "RATE-LAME", //
   "MAGIC-PANIC", // MAGIC -> MANIC -> PANIC
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
+  "RATE-LAME", //
+  "RATE-LAME", //
+  "RATE-LAME", //
+  "RATE-LAME", //
+  "RATE-LAME", //
+  
+  // MEDIUM
   "MILE-HARE", // MILE -> MALE -> MARE -> HARE -> HARP
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
+  "RATE-LAME", //
+  "RATE-LAME", //
+  "RATE-LAME", //
+  "RATE-LAME", //
+  "RATE-LAME", //
   "SPACE-SHORT", // SPACE -> SPARE -> SPORE -> SHORE -> SHORT
-  "BRIM-TICK",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME",
-  "RATE-LAME"
+  "BRIM-TICK", //
+  
+  // VERY HARD
+  "RATE-LAME", //
+  "RATE-LAME", //
+  "PANE-PAIN", // PAIN -> PAID -> LAID -> LAND -> LANE -> PANE
+  "PAIR-LEAD", // PAIR -> HAIR -> HEIR -> HEAR -> HEAD -> LEAD -> BEAR
+  "STEEP-SPEAK", // SPEAK -> SPEAR -> SHEAR -> SHEER -> SHEEP -> STEEP
 };
 
 int LevelScene::s_Level = 1;
@@ -73,7 +74,7 @@ LevelScene::~LevelScene()
 
 void LevelScene::SetLevel(int level)
 {
-  if (level < 1 || level > numLevels)
+  if (level < 1 || level >= numLevels)
   {
     SDL_Log("Level exceeds max range! (%d)", level);
     return;

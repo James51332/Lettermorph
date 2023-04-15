@@ -16,7 +16,7 @@ struct Color
 struct Style
 {
   constexpr static float SmallScale = 0.5f;
-  constexpr static float LargeScale = 1.0f;
+  constexpr static float LargeScale = 0.75f;
   
   constexpr static SDL_FPoint SmallPadding{20, 10};
   constexpr static SDL_FPoint LargePadding{50, 30};
