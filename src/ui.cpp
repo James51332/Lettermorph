@@ -141,6 +141,7 @@ void UI::TiledText(const std::string& word, float x, float y, int pulseType, siz
 
 void UI::PulseLastTile()
 {
+  Animator::ResetAnimation(s_PulseAnimations[0]);
   Animator::SetAnimationActive(s_PulseAnimations[0]);
 }
 

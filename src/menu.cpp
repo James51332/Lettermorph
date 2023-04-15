@@ -5,6 +5,7 @@
 #include "animation.h"
 #include "input.h"
 #include "game.h"
+#include "audio.h"
 
 namespace ltrm
 {
@@ -29,7 +30,7 @@ MenuScene::~MenuScene()
 
 void MenuScene::Load()
 {
-  m_StartTime = SDL_GetTicks();
+  m_LastTime = SDL_GetTicks();
 }
 
 void MenuScene::Unload()
@@ -41,10 +42,12 @@ void MenuScene::Update()
 {
   Renderer::Clear(Color::Accent);
   
-  float activeTime = SDL_GetTicks() - m_StartTime;
-  if (!m_Pulsed && activeTime >= 2000.0f)
+  float time = SDL_GetTicks();
+  m_PulseTime += time - m_LastTime;
+  m_LastTime = time;
+  if (m_PulseTime >= 3000.0f)
   {
-    m_Pulsed = true;
+    m_PulseTime = 0.0f;
     UI::PulseTiles();
   }
   
@@ -58,7 +61,7 @@ void MenuScene::Update()
     UI::TiledText(std::string("morph"), x, y + Style::TileSize + Style::SmallMargin, 2);
   }
   
-  constexpr float btnWidth = 600;
+  constexpr float btnWidth = 800;
   constexpr float btnHeight = 120;
   
   constexpr float layoutWidth = btnWidth;
@@ -69,7 +72,7 @@ void MenuScene::Update()
     SceneManager::ChangeScene("selection");
   }
   
-  if (UI::Button("Levels", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, true))
+  if (UI::Button("Settings", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, true))
   {
   }
   
@@ -81,7 +84,7 @@ void MenuScene::Update()
 
 void MenuScene::KeyDown(SDL_Keycode key)
 {
-
+  Mixer::Pop();
 }
 
 }

@@ -5,6 +5,7 @@
 #include "ui.h"
 #include "style.h"
 #include "animation.h"
+#include "audio.h"
 
 #include <SDL3/SDL.h>
 #include <cstring>
@@ -187,6 +188,7 @@ void LevelScene::KeyDown(SDL_Keycode key)
     {
       lastWord.push_back(key);
       UI::PulseLastTile();
+      Mixer::Pop();
     }
   }
   else if (key == SDLK_BACKSPACE)
@@ -194,6 +196,7 @@ void LevelScene::KeyDown(SDL_Keycode key)
     if (lastWord.length() > 0)
     {
       lastWord.pop_back();
+      Mixer::Pop();
     }
   }
   else if (key == SDLK_RETURN)

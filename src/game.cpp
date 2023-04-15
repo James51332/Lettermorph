@@ -8,9 +8,11 @@
 #include "dictionary.h"
 #include "ui.h"
 #include "animation.h"
+#include "audio.h"
 
 #include <SDL3/SDL_image.h>
 #include <SDL3/SDL_ttf.h>
+#include <SDL3/SDL_mixer.h>
 
 namespace ltrm
 {
@@ -54,9 +56,17 @@ void Game::Init()
     return;
   }
   
+  if (Mix_Init(MIX_INIT_MP3) == 0)
+  {
+    SDL_Log("Failed to initialize SDL_mixer: %s", Mix_GetError());
+    Stop();
+    return;
+  }
+  
   Animator::Init();
   Dictionary::Init();
   UI::Init();
+  Mixer::Init();
   
   // Create a window
   WindowDesc desc;
@@ -80,7 +90,9 @@ void Game::Shutdown()
   SceneManager::Shutdown();
   Dictionary::Shutdown();
   UI::Shutdown();
+  Mixer::Shutdown();
   Animator::Shutdown();
+  Mix_Quit();
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();
