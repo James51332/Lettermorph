@@ -67,16 +67,16 @@ void MenuScene::Update()
   constexpr float layoutWidth = btnWidth;
   constexpr float smallBtnWidth = (layoutWidth - Style::SmallMargin) / 2;
   
-  if (UI::Button("Play", Renderer::GetWidth() / 2, (Renderer::GetHeight() - Style::SmallMargin - btnHeight) / 2, btnWidth, btnHeight, true))
+  if (UI::Button("Play", Renderer::GetWidth() / 2, (Renderer::GetHeight() - Style::SmallMargin - btnHeight) / 2, btnWidth, btnHeight, 0.8f))
   {
     SceneManager::ChangeScene("selection");
   }
   
-  if (UI::Button("Settings", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, true))
+  if (UI::Button("Settings", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
   {
   }
   
-  if (UI::Button("Quit", (Renderer::GetWidth() + layoutWidth - smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, true))
+  if (UI::Button("Quit", (Renderer::GetWidth() + layoutWidth - smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
   {
     Game::GetInstance()->Stop();
   }

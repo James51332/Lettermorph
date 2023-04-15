@@ -3,6 +3,7 @@
 #include "renderer.h"
 #include "style.h"
 #include "animation.h"
+#include "audio.h"
 
 #include <SDL3/SDL_ttf.h>
 
@@ -65,7 +66,9 @@ bool UI::Button(const char* text, float x, float y, float w, float h, float scal
   Renderer::Rect(bounds.x, bounds.y, bounds.w, bounds.h);
   UI::Text(text, x, y, scale);
   
-  return highlighted && Input::MousePress(SDL_BUTTON_LEFT);
+  bool clicked = highlighted && Input::MousePress(SDL_BUTTON_LEFT);
+  if (clicked) Mixer::Click();
+  return clicked;
 }
 
 void UI::Text(const char* text, float x, float y, float scale)

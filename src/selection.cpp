@@ -20,7 +20,7 @@ SelectionScene::~SelectionScene()
 
 void SelectionScene::Load()
 {
-  
+  m_LastTime = SDL_GetTicks();
 }
 
 void SelectionScene::Unload()
@@ -32,6 +32,21 @@ void SelectionScene::Update()
 {
   Renderer::Clear(Color::Accent);
   
+  // Title
+  {
+    float time = SDL_GetTicks();
+    m_PulseTime += time - m_LastTime;
+    m_LastTime = time;
+    
+    if (m_PulseTime >= 3000.0f)
+    {
+      m_PulseTime = 0.0f;
+      UI::PulseTiles();
+    }
+    
+  	UI::TiledText(std::string("Levels"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
+  }
+  
 	// Draw a grid of level buttons
   constexpr float size = 150;
   constexpr float margin = Style::SmallMargin;
@@ -40,9 +55,9 @@ void SelectionScene::Update()
   float y = Renderer::GetHeight() / 2;
   
   x -= 2 * (size + margin);
-  y -= 2 * (size + margin);
+  y -= 1 * (size + margin);
   
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 3; i++)
   {
     for (int j = 0; j < 5; j++)
     {

@@ -12,6 +12,7 @@ public:
   static void Shutdown();
   
   static void Pop();
+  static void Click();
   
   static void SetVolume(float volume);
   
@@ -20,6 +21,7 @@ private:
   static int s_Volume;
   
   static Mix_Chunk* s_Pop;
+  static Mix_Chunk* s_Click;
 };
 
 }

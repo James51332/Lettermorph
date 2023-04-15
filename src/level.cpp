@@ -14,27 +14,17 @@ namespace ltrm
 {
 
 // 25 Levels and Solutions (not necessarily optimal/only)
-static constexpr size_t numLevels = 25;
+static constexpr size_t numLevels = 15;
 static constexpr const char* levels[] = {
   // EASY
   "CAT-BAR", // CAT -> CAR -> BAR
   "RATE-LAME", // RATE -> LATE -> LAME
   "PANT-PART", //
   "RATE-LAME", //
-  "RATE-LAME", //
-  "RATE-LAME", //
   "MAGIC-PANIC", // MAGIC -> MANIC -> PANIC
-  "RATE-LAME", //
-  "RATE-LAME", //
-  "RATE-LAME", //
-  "RATE-LAME", //
-  "RATE-LAME", //
   
   // MEDIUM
   "MILE-HARE", // MILE -> MALE -> MARE -> HARE -> HARP
-  "RATE-LAME", //
-  "RATE-LAME", //
-  "RATE-LAME", //
   "RATE-LAME", //
   "RATE-LAME", //
   "SPACE-SHORT", // SPACE -> SPARE -> SPORE -> SHORE -> SHORT
@@ -120,7 +110,7 @@ void LevelScene::Update()
   }
   
   // Draw working words
-  float y = Style::SmallMargin - m_ScrollOffset - Animator::QueryAnimation(m_ScrollAnimation).Value;
+  float y = (Renderer::GetHeight() / 2 - 750) - m_ScrollOffset - Animator::QueryAnimation(m_ScrollAnimation).Value;
   float x = (Renderer::GetWidth() - UI::TiledTextWidth(m_WordLength)) / 2;
   int num = 0;
   for (auto& word : m_Words)
@@ -132,14 +122,14 @@ void LevelScene::Update()
   
   // Draw target words
   x = Renderer::GetWidth() / 2;
-  y = Renderer::GetHeight() - (Style::TileSize + Style::SmallMargin);
+  y = (Renderer::GetHeight() / 2 + 750) - (Style::TileSize + Style::SmallMargin);
   UI::TiledText(m_TargetWord, x, y);
   
   // Win Screen
   if (m_Won)
   {
-    float panelWidth = 800;
-    float panelHeight = 600;
+    float panelWidth = 1000;
+    float panelHeight = 800;
     float panelX = (Renderer::GetWidth() - panelWidth) / 2;
     float panelY = (Renderer::GetHeight() - panelHeight) / 2;
     float buttonPadding = Style::SmallMargin;
@@ -150,7 +140,7 @@ void LevelScene::Update()
     Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
     
     float textHeight;
-    UI::TextSize("You Won!", nullptr, &textHeight, 1.0f);
+    UI::TextSize("You Won!", nullptr, &textHeight, 1.2f);
     UI::Text("You Won!", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
     
     float btnWidth = 200, btnHeight = 100;

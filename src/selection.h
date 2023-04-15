@@ -17,6 +17,9 @@ public:
   void Unload();
   void Update();
   void KeyDown(SDL_Keycode key);
+  
+private:
+  float m_PulseTime = 0, m_LastTime;
 };
 
 }
