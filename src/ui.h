@@ -26,6 +26,7 @@ public:
   static bool Slider(float x, float y, float w, float h, float lower, float upper, float& value);
   
   static void Text(const char*, float, float, float scale);
+  static void WrappedText(const char*, float, float, uint32_t, float scale);
   
   // Pulse Types:
   // 0 => Don't pulse

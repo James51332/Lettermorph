@@ -9,6 +9,7 @@ namespace ltrm
 Window::Window(const WindowDesc& desc)
 {
   SDL_WindowFlags flags = desc.resizeable ? SDL_WINDOW_RESIZABLE : (SDL_WindowFlags)0;
+  flags = static_cast<SDL_WindowFlags>(flags | (desc.fullscreen ? SDL_WINDOW_FULLSCREEN : (SDL_WindowFlags)0));
   m_Handle = SDL_CreateWindow(desc.title.c_str(), desc.width, desc.height, flags);
   
   Input::Init();

@@ -6,6 +6,7 @@
 #include "menu.h"
 #include "settings.h"
 #include "selection.h"
+#include "help.h"
 #include "dictionary.h"
 #include "ui.h"
 #include "animation.h"
@@ -71,10 +72,9 @@ void Game::Init()
   
   // Create a window
   WindowDesc desc;
-  desc.width = 1000;
-  desc.height = 800;
   desc.title = "Lettermorph";
-  desc.resizeable = true;
+  desc.resizeable = false;
+  desc.fullscreen = true;
   m_Window = new Window(desc);
   
   // Scene Manager
@@ -82,6 +82,7 @@ void Game::Init()
   SceneManager::AddScene(new SelectionScene(), "selection");
   SceneManager::AddScene(new LevelScene(), "level");
   SceneManager::AddScene(new SettingsScene(), "settings");
+  SceneManager::AddScene(new HelpScene(), "help");
 }
 
 void Game::Shutdown()

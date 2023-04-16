@@ -72,14 +72,14 @@ void MenuScene::Update()
     SceneManager::ChangeScene("selection");
   }
   
-  if (UI::Button("Settings", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
+  if (UI::Button("Help", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
   {
-    SceneManager::ChangeScene("settings");
+    SceneManager::ChangeScene("help");
   }
   
-  if (UI::Button("Quit", (Renderer::GetWidth() + layoutWidth - smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
+  if (UI::Button("Settings", (Renderer::GetWidth() + layoutWidth - smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
   {
-    Game::GetInstance()->Stop();
+    SceneManager::ChangeScene("settings");
   }
 }
 

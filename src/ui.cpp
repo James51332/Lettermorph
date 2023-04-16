@@ -157,6 +157,36 @@ void UI::Text(const char* text, float x, float y, float scale)
   Renderer::Image(textTexture->Texture, x - sw/2, y - sh/2, sw, sh);
 }
 
+void UI::WrappedText(const char* text, float x, float y, uint32_t wrap, float scale)
+{
+  TextTexture* textTexture;
+  
+  if (s_TextTextures.find(text) == s_TextTextures.end())
+  {
+    TTF_SetFontWrappedAlign(s_Font, TTF_WRAPPED_ALIGN_CENTER);
+    SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(s_Font, text, Color::Light, wrap / scale);
+    
+    textTexture = new TextTexture();
+    textTexture->Texture = new Texture(SDL_CreateTextureFromSurface(Renderer::GetRenderer(), surface));
+    
+    int w, h;
+    SDL_QueryTexture(textTexture->Texture->GetTexture(), nullptr, nullptr, &w, &h);;
+    textTexture->Width = w;
+    textTexture->Height = h;
+    
+    s_TextTextures.try_emplace(std::string(text), textTexture);
+    
+    SDL_DestroySurface(surface);
+  } else
+  {
+    textTexture = s_TextTextures.at(std::string(text));
+  }
+  
+  float sw = textTexture->Width * scale;
+  float sh = textTexture->Height * scale;
+  Renderer::Image(textTexture->Texture, x - sw/2, y - sh/2, sw, sh);
+}
+
 void UI::TiledText(const std::string& word, float x, float y, int pulseType, size_t size)
 {
   if (size == 0) // Center if the word is not given with a length

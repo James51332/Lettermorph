@@ -12,6 +12,7 @@ struct WindowDesc
   uint32_t height;
   std::string title;
   bool resizeable = false;
+  bool fullscreen = true;
   
   WindowDesc(uint32_t w = 800, uint32_t h = 600, std::string title = "App")
   	: width(w), height(h), title(title) {}
