@@ -14,25 +14,29 @@ namespace ltrm
 {
 
 // 25 Levels and Solutions (not necessarily optimal/only)
+
+// I came up with most of these by coming up with a starting
+// and ending word and solving. Then I ranked by difficulty.
+
 static constexpr size_t numLevels = 15;
 static constexpr const char* levels[] = {
   // EASY
   "CAT-BAR", // CAT -> CAR -> BAR
   "RATE-LAME", // RATE -> LATE -> LAME
-  "PANT-PART", //
-  "RATE-LAME", //
+  "PANT-CART", // PANT -> PART -> CART
+  "SPAT-STAR", // STAR -> STAT -> SPAT
   "MAGIC-PANIC", // MAGIC -> MANIC -> PANIC
   
   // MEDIUM
   "MILE-HARE", // MILE -> MALE -> MARE -> HARE -> HARP
-  "RATE-LAME", //
-  "RATE-LAME", //
+  "LOOP-CREW", // CREW -> CROW -> CROP -> COOP -> LOOP
   "SPACE-SHORT", // SPACE -> SPARE -> SPORE -> SHORE -> SHORT
-  "BRIM-TICK", //
+  "FINE-RICE", // RICE -> RACE -> LACE -> LINE -> FINE
+  "WILD-TANK", // TANK -> TALK -> TALL -> WALL -> WILL -> WILD
   
   // VERY HARD
-  "RATE-LAME", //
-  "RATE-LAME", //
+  "PACE-DARE", // DARE -> DATE -> MATE -> MACE -> PACE
+  "GRID-WAND", // WAND -> WANT -> WAIT -> WRIT -> GRIT -> GRID
   "PANE-PAIN", // PAIN -> PAID -> LAID -> LAND -> LANE -> PANE
   "PAIR-LEAD", // PAIR -> HAIR -> HEIR -> HEAR -> HEAD -> LEAD -> BEAR
   "STEEP-SPEAK", // SPEAK -> SPEAR -> SHEAR -> SHEER -> SHEEP -> STEEP
@@ -65,7 +69,7 @@ LevelScene::~LevelScene()
 
 void LevelScene::SetLevel(int level)
 {
-  if (level < 1 || level >= numLevels)
+  if (level < 1 || level > numLevels)
   {
     SDL_Log("Level exceeds max range! (%d)", level);
     return;
@@ -140,23 +144,29 @@ void LevelScene::Update()
     Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
     
     float textHeight;
-    UI::TextSize("You Won!", nullptr, &textHeight, 1.2f);
-    UI::Text("You Won!", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
+    UI::TextSize("Level Complete!", nullptr, &textHeight, 1.2f);
+    UI::Text("Level Complete!", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
     
     std::string score = "Score: ";
     score.append(std::to_string(m_Words.size()));
-    UI::Text(score.c_str(), Renderer::GetWidth() / 2, panelY + 300 + textHeight / 2, 0.8f);
+    UI::Text(score.c_str(), Renderer::GetWidth() / 2, panelY + 200 + textHeight / 2, 0.7f);
     
     float btnWidth = 200, btnHeight = 100;
     if (UI::Button("Back", Renderer::GetWidth() / 2 - Style::SmallMargin / 2 - btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
     {
-      SceneManager::ChangeScene("main");
+      SceneManager::ChangeScene("selection");
     }
     
     if (UI::Button("Next", Renderer::GetWidth() / 2 + Style::SmallMargin / 2 + btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
     {
-      if (s_Level < numLevels) s_Level++;
-      SceneManager::ChangeScene("level");
+      if (s_Level < numLevels)
+      {
+        s_Level++;
+      	SceneManager::ChangeScene("level");
+      } else
+      {
+        SceneManager::ChangeScene("selection");
+      }
     }
   }
 }
