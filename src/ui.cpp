@@ -71,6 +71,40 @@ bool UI::Button(const char* text, float x, float y, float w, float h, float scal
   return clicked;
 }
 
+bool UI::Slider(float x, float y, float w, float h, float lower, float upper, float &value)
+{
+  SDL_FRect bounds = {x, y, w, h};
+  SDL_FPoint mouse = {Input::GetMouseX(), Input::GetMouseY()};
+  float boxSize = h - 2 * Style::SmallMargin;
+  float boxLeft = x + (Style::SmallMargin + boxSize / 2);
+  float boxSpace = w - (2 * Style::SmallMargin + boxSize);
+  
+  bool move = Input::MouseDown(SDL_BUTTON_LEFT) && SDL_PointInRectFloat(&mouse, &bounds);
+  if (move)
+  {
+    float mousePercent = (mouse.x - boxLeft) / (boxSpace);
+    if (mousePercent < 0) mousePercent = 0;
+    if (mousePercent > 1) mousePercent = 1;
+    
+    value = mousePercent * (upper - lower) + lower;
+  }
+    
+  Renderer::NoStroke();
+  Renderer::Fill(Color::Dark);
+  Renderer::Rect(x, y, w, h);
+  
+  float boxPos = (value / (upper - lower)) * (boxSpace) + boxLeft;
+	Renderer::Stroke(Color::Light);
+  Renderer::StrokeWeight(5);
+  Renderer::Fill(move ? Color::Middle : Color::Dark);
+  Renderer::Rect(boxPos - boxSize / 2, y + (h - boxSize) / 2 , boxSize, boxSize);
+  
+  std::string valueText = std::to_string(static_cast<int>(value));
+  UI::Text(valueText.c_str(), boxPos, y + h / 2, 0.6f);
+  
+  return move;
+}
+
 void UI::Text(const char* text, float x, float y, float scale)
 {
   // If the text hasn't already been rendered, we need to create the texture

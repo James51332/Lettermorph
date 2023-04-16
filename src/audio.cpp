@@ -59,4 +59,15 @@ void Mixer::Click()
   Mix_PlayChannel(-1, s_Click, 0);
 }
 
+void Mixer::SetMusicVolume(float volume)
+{
+  Mix_VolumeMusic(volume * 128);
+}
+
+void Mixer::SetFXVolume(float volume)
+{
+  Mix_VolumeChunk(s_Pop, 32 * volume);
+  Mix_VolumeChunk(s_Click, 48 * volume);
+}
+
 }

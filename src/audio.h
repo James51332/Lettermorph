@@ -14,7 +14,8 @@ public:
   static void Pop();
   static void Click();
   
-  static void SetVolume(float volume);
+  static void SetMusicVolume(float volume);
+  static void SetFXVolume(float volume);
   
 private:
   static Mix_Music* s_Music;

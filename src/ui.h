@@ -20,6 +20,8 @@ public:
   static bool Button(const char*, float, float, bool large); // Button with automatic padding
   static bool Button(const char*, float, float, float, float, float scale); // Button with fixed size
   
+  static bool Slider(float x, float y, float w, float h, float lower, float upper, float& value);
+  
   static void Text(const char*, float, float, float scale);
   
   // Pulse Types:

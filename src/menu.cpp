@@ -74,6 +74,7 @@ void MenuScene::Update()
   
   if (UI::Button("Settings", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
   {
+    SceneManager::ChangeScene("settings");
   }
   
   if (UI::Button("Quit", (Renderer::GetWidth() + layoutWidth - smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
