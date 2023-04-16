@@ -11,15 +11,17 @@ Mix_Chunk* Mixer::s_Click;
 
 void Mixer::Init()
 {
-  Mix_OpenAudio(22050, AUDIO_S32SYS, 8, 1280);
-
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+  {
+    SDL_Log("Failed to Open Audio Device: %s", Mix_GetError());
+  }
   
   s_Music = Mix_LoadMUS("resources/lobby-time.mp3");
   if (!s_Music)
   {
     SDL_Log("Failed to load game music: %s", Mix_GetError());
   }
-  Mix_PlayMusic(s_Music, 0);
+  Mix_PlayMusic(s_Music, -1);
   
   s_Pop = Mix_LoadWAV("resources/pop.wav");
   if (!s_Pop)
@@ -39,25 +41,22 @@ void Mixer::Init()
 
 void Mixer::Shutdown()
 {
-  Mix_FreeMusic(s_Music);
   Mix_FreeChunk(s_Pop);
   Mix_FreeChunk(s_Click);
+  
+  Mix_FreeMusic(s_Music);
   
   Mix_CloseAudio();
 }
 
 void Mixer::Pop()
 {
-  int channel = 0;
-  while (Mix_Playing(channel) && channel < 16) channel++;
-  Mix_PlayChannelTimed(channel, s_Pop, 0, 50);
+  Mix_PlayChannel(-1, s_Pop, 0);
 }
 
 void Mixer::Click()
 {
-  int channel = 0;
-  while (Mix_Playing(channel) && channel < 16) channel++;
-  Mix_PlayChannelTimed(channel, s_Click, 0, 50);
+  Mix_PlayChannel(-1, s_Click, 0);
 }
 
 }
