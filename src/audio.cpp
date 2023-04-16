@@ -8,6 +8,7 @@ namespace ltrm
 Mix_Music* Mixer::s_Music;
 Mix_Chunk* Mixer::s_Pop;
 Mix_Chunk* Mixer::s_Click;
+Mix_Chunk* Mixer::s_Win;
 
 void Mixer::Init()
 {
@@ -35,8 +36,15 @@ void Mixer::Init()
     SDL_Log("Failed to load game music: %s", Mix_GetError());
   }
   
+  s_Win = Mix_LoadWAV("resources/win.wav");
+  if (!s_Win)
+  {
+    SDL_Log("Failed to load game music: %s", Mix_GetError());
+  }
+  
   Mix_VolumeChunk(s_Pop, 32);
   Mix_VolumeChunk(s_Click, 48);
+  Mix_VolumeChunk(s_Win, 60);
 }
 
 void Mixer::Shutdown()
@@ -59,6 +67,11 @@ void Mixer::Click()
   Mix_PlayChannel(-1, s_Click, 0);
 }
 
+void Mixer::Win()
+{
+  Mix_PlayChannel(-1, s_Win, 0);
+}
+
 void Mixer::SetMusicVolume(float volume)
 {
   Mix_VolumeMusic(volume * 128);
@@ -68,6 +81,7 @@ void Mixer::SetFXVolume(float volume)
 {
   Mix_VolumeChunk(s_Pop, 32 * volume);
   Mix_VolumeChunk(s_Click, 48 * volume);
+  Mix_VolumeChunk(s_Win, 60 * volume);
 }
 
 }

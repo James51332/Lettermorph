@@ -223,6 +223,7 @@ void LevelScene::KeyDown(SDL_Keycode key)
     if (Dictionary::AlphaCompare(lastWord, m_TargetWord) == 0)
     {
       UI::PulseTiles(0.25f);
+      Mixer::Win();
       m_Won = true;
       return;
     }

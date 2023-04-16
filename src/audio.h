@@ -13,6 +13,7 @@ public:
   
   static void Pop();
   static void Click();
+  static void Win();
   
   static void SetMusicVolume(float volume);
   static void SetFXVolume(float volume);
@@ -23,6 +24,7 @@ private:
   
   static Mix_Chunk* s_Pop;
   static Mix_Chunk* s_Click;
+  static Mix_Chunk* s_Win;
 };
 
 }
