@@ -13,21 +13,19 @@ void Dictionary::Init()
 {
 	constexpr const char* dictionary = "resources/dictionary.txt";
   constexpr const char* delim = "\n";
-  
-  // Load the dictionary into a string
-  std::fstream filestream(dictionary);
-  if (!filestream)
+
+  SDL_RWops* ops = SDL_RWFromFile(dictionary, "rb");
+  if (!ops)
   {
-    SDL_Log("Failed to load dictionary!");
-    return;
+    SDL_Log("Failed to open dictionary!!");
   }
-  
-  std::string data;
-  filestream.seekg(0, filestream.end);
-  data.resize(filestream.tellg());
-  filestream.seekg(0, filestream.beg);
-  filestream.read(&data[0], data.size());
-  filestream.close();
+
+  SDL_RWseek(ops, 0, SDL_RW_SEEK_END);
+  size_t size = SDL_RWtell(ops);
+  std::string data(size, ' ');
+  SDL_RWseek(ops, 0, 0);
+  SDL_RWread(ops, &data[0], size);
+  SDL_RWclose(ops);
   
   // Break the file into tokens
   char* token = strtok(&data[0], delim);
@@ -73,7 +71,6 @@ bool Dictionary::CheckWord(const std::string& word)
   }
   return false;
 }
-
 
 // Returns
 // 0 if word1 and word2 are equal
