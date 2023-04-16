@@ -16,6 +16,9 @@ class UI
 public:
   static void Init();
   static void Shutdown();
+  
+  static void Begin();
+  static void End();
 
   static bool Button(const char*, float, float, bool large); // Button with automatic padding
   static bool Button(const char*, float, float, float, float, float scale); // Button with fixed size
@@ -52,6 +55,9 @@ private:
   
   // This will enable us to do cascaded pulses
   static std::vector<int> s_PulseAnimations;
+  
+  static std::vector<bool> m_SliderStates;
+  static int m_CurrentSlider;
 };
 
 }

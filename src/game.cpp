@@ -116,7 +116,9 @@ void Game::Run()
     lastTime = SDL_GetTicks();
     Animator::Update(timestep);
     
+    UI::Begin();
     SceneManager::Update();
+    UI::End();
     
     m_Window->SwapBuffers();
   }

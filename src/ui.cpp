@@ -15,6 +15,9 @@ std::unordered_map<std::string, UI::TextTexture*> UI::s_TextTextures;
 
 std::vector<int> UI::s_PulseAnimations;
 
+std::vector<bool> UI::m_SliderStates;
+int UI::m_CurrentSlider = 0;
+
 void UI::Init()
 {
 	s_Font = TTF_OpenFont("resources/Arial.ttf", 80);
@@ -40,6 +43,20 @@ void UI::Shutdown()
   for (auto pair : s_TextTextures)
   {
     delete pair.second;
+  }
+}
+
+void UI::Begin()
+{
+  m_CurrentSlider = 0;
+}
+
+void UI::End()
+{
+  if (!Input::MouseDown(SDL_BUTTON_LEFT))
+  {
+    for (size_t i = 0; i < m_SliderStates.size(); i++)
+      m_SliderStates[i] = false;
   }
 }
 
@@ -79,8 +96,12 @@ bool UI::Slider(float x, float y, float w, float h, float lower, float upper, fl
   float boxLeft = x + (Style::SmallMargin + boxSize / 2);
   float boxSpace = w - (2 * Style::SmallMargin + boxSize);
   
-  bool move = Input::MouseDown(SDL_BUTTON_LEFT) && SDL_PointInRectFloat(&mouse, &bounds);
-  if (move)
+  bool move = Input::MousePress(SDL_BUTTON_LEFT) && SDL_PointInRectFloat(&mouse, &bounds);
+  int slider = m_CurrentSlider++;
+  if (m_SliderStates.size() <= slider) m_SliderStates.push_back(move);
+  if (move) m_SliderStates[slider] = move;
+  
+  if (m_SliderStates[slider])
   {
     float mousePercent = (mouse.x - boxLeft) / (boxSpace);
     if (mousePercent < 0) mousePercent = 0;
@@ -96,13 +117,13 @@ bool UI::Slider(float x, float y, float w, float h, float lower, float upper, fl
   float boxPos = (value / (upper - lower)) * (boxSpace) + boxLeft;
 	Renderer::Stroke(Color::Light);
   Renderer::StrokeWeight(5);
-  Renderer::Fill(move ? Color::Middle : Color::Dark);
+  Renderer::Fill(m_SliderStates[slider] ? Color::Middle : Color::Dark);
   Renderer::Rect(boxPos - boxSize / 2, y + (h - boxSize) / 2 , boxSize, boxSize);
   
   std::string valueText = std::to_string(static_cast<int>(value));
   UI::Text(valueText.c_str(), boxPos, y + h / 2, 0.6f);
   
-  return move;
+  return m_SliderStates[slider];
 }
 
 void UI::Text(const char* text, float x, float y, float scale)
