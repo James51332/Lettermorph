@@ -61,9 +61,9 @@ void LeaderboardScene::Update()
   Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
   
   float textHeight;
-  y = panelY + 100 + textHeight / 2;
-  UI::TextSize("Level Complete!", nullptr, &textHeight, 1.2f);
-  UI::Text("Scores", Renderer::GetWidth() / 2, y, 1.2f);
+  UI::TextSize("Score", nullptr, &textHeight, 1.0f);
+  y = panelY + 5 + Style::SmallMargin + textHeight / 2;
+  UI::Text("Scores", Renderer::GetWidth() / 2, y, 1.0f);
   
   float x = Renderer::GetWidth() / 2;
   float height;
