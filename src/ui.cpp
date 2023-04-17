@@ -32,7 +32,7 @@ void UI::Init()
   pulse.Max = 10;
   pulse.Loop = false;
   pulse.Duration = 0.1;
-  for (size_t i = 0; i < 10; i++)
+  for (size_t i = 0; i < 15; i++)
     s_PulseAnimations.push_back(Animator::RegisterAnimation(pulse));
 }
 

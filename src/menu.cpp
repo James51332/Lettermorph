@@ -61,26 +61,31 @@ void MenuScene::Update()
     UI::TiledText(std::string("morph"), x, y + Style::TileSize + Style::SmallMargin, 2);
   }
   
-  constexpr float btnWidth = 800;
+	constexpr float btnWidth = 800;
   constexpr float btnHeight = 120;
-  
+  constexpr float scale = 0.7f;
   constexpr float layoutWidth = btnWidth;
   constexpr float smallBtnWidth = (layoutWidth - Style::SmallMargin) / 2;
   
-  if (UI::Button("Play", Renderer::GetWidth() / 2, (Renderer::GetHeight() - Style::SmallMargin - btnHeight) / 2, btnWidth, btnHeight, 0.8f))
-  {
+  float cx = Renderer::GetWidth() / 2;
+  float cy = Renderer::GetHeight() / 2;
+  float lx = cx - (layoutWidth - smallBtnWidth) / 2;
+  float rx = cx + (layoutWidth - smallBtnWidth) / 2;
+  
+  if (UI::Button("Play", cx, cy - Style::SmallMargin - btnHeight, btnWidth, btnHeight, scale))
     SceneManager::ChangeScene("selection");
-  }
   
-  if (UI::Button("Help", (Renderer::GetWidth() - layoutWidth + smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
-  {
-    SceneManager::ChangeScene("help");
-  }
-  
-  if (UI::Button("Settings", (Renderer::GetWidth() + layoutWidth - smallBtnWidth) / 2, (Renderer::GetHeight() + Style::SmallMargin + btnHeight) / 2, smallBtnWidth, btnHeight, 0.8f))
-  {
+  if (UI::Button("Leaderboard", lx, cy, smallBtnWidth, btnHeight, scale))
+    SceneManager::ChangeScene("leaderboard");
+
+  if (UI::Button("Settings", rx, cy, smallBtnWidth, btnHeight, scale))
     SceneManager::ChangeScene("settings");
-  }
+  
+  if (UI::Button("Help", lx, cy + Style::SmallMargin + btnHeight, smallBtnWidth, btnHeight, scale))
+    SceneManager::ChangeScene("help");
+  
+  if (UI::Button("Quit", rx, cy + Style::SmallMargin + btnHeight, smallBtnWidth, btnHeight, scale))
+    Game::GetInstance()->Stop();
 }
 
 void MenuScene::KeyDown(SDL_Keycode key)

@@ -6,6 +6,7 @@
 #include "style.h"
 #include "animation.h"
 #include "audio.h"
+#include "entry.h"
 
 #include <SDL3/SDL.h>
 #include <cstring>
@@ -43,6 +44,7 @@ static constexpr const char* levels[] = {
 };
 
 int LevelScene::s_Level = 1;
+std::vector<int> LevelScene::s_CompleteScores;
 
 LevelScene::LevelScene()
 {
@@ -61,6 +63,9 @@ LevelScene::LevelScene()
   scroll.Duration = 0.15;
   scroll.Loop = false;
   m_ScrollAnimation = Animator::RegisterAnimation(scroll);
+  
+  for (size_t i = 0; i < numLevels; i++)
+    s_CompleteScores.push_back(0);
 }
 
 LevelScene::~LevelScene()
@@ -159,14 +164,7 @@ void LevelScene::Update()
     
     if (UI::Button("Next", Renderer::GetWidth() / 2 + Style::SmallMargin / 2 + btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
     {
-      if (s_Level < numLevels)
-      {
-        s_Level++;
-      	SceneManager::ChangeScene("level");
-      } else
-      {
-        SceneManager::ChangeScene("selection");
-      }
+      NextLevel();
     }
   }
 }
@@ -181,9 +179,32 @@ void LevelScene::Unload()
   m_Won = false;
 }
 
+void LevelScene::NextLevel()
+{
+  if (s_Level < numLevels)
+  {
+    s_Level++;
+    SceneManager::ChangeScene("level");
+  } else
+  {
+    if (m_AllComplete)
+      SceneManager::ChangeScene("entry");
+    else
+      SceneManager::ChangeScene("selection");
+  }
+}
+
 void LevelScene::KeyDown(SDL_Keycode key)
 {
-  if (m_Won) return;
+  if (m_Won)
+  {
+    if (key == SDLK_RETURN)
+    {
+      NextLevel();
+      Mixer::Pop();
+    }
+    return;
+  }
   
   std::string& lastWord = m_Words[m_Words.size() -1];
   if (isalpha(key))
@@ -235,6 +256,17 @@ void LevelScene::KeyDown(SDL_Keycode key)
       UI::PulseTiles(0.25f);
       Mixer::Win();
       m_Won = true;
+      s_CompleteScores[s_Level - 1] = m_Words.size();
+      
+      m_AllComplete = true;
+      size_t score = 0;
+      for (auto s : s_CompleteScores)
+      {
+        if (s == 0) m_AllComplete = false;
+        score += s;
+      }
+      if (m_AllComplete) EntryScene::SetScore(score);
+      
       return;
     }
     
@@ -247,6 +279,12 @@ void LevelScene::KeyDown(SDL_Keycode key)
       Animator::SetAnimationActive(m_ScrollAnimation);
     }
   }
+}
+
+void LevelScene::Reset()
+{
+  for (auto& s : s_CompleteScores)
+    s = 0;
 }
 
 }

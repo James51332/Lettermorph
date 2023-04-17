@@ -7,6 +7,8 @@
 #include "settings.h"
 #include "selection.h"
 #include "help.h"
+#include "leaderboard.h"
+#include "entry.h"
 #include "dictionary.h"
 #include "ui.h"
 #include "animation.h"
@@ -83,6 +85,8 @@ void Game::Init()
   SceneManager::AddScene(new LevelScene(), "level");
   SceneManager::AddScene(new SettingsScene(), "settings");
   SceneManager::AddScene(new HelpScene(), "help");
+  SceneManager::AddScene(new LeaderboardScene, "leaderboard");
+  SceneManager::AddScene(new EntryScene(), "entry");
 }
 
 void Game::Shutdown()
