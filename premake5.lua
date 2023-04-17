@@ -70,6 +70,5 @@ project "Lettermorph"
 		links
 		{
 			"Cocoa.framework",
-			"QuartzCore.framework",
-			"OpenGL.framework"
+			"QuartzCore.framework"
 		}

@@ -21,7 +21,7 @@ void Renderer::Init(SDL_Window *window)
   s_Initalized = true;
   
   // TODO: RenderAPIs
-  s_Renderer = SDL_CreateRenderer(window, "opengl", SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  s_Renderer = SDL_CreateRenderer(window, "metal", SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   
   s_FontTexture = new Texture("resources/letters.png");
 }

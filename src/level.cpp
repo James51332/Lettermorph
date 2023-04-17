@@ -256,7 +256,7 @@ void LevelScene::KeyDown(SDL_Keycode key)
       UI::PulseTiles(0.25f);
       Mixer::Win();
       m_Won = true;
-      s_CompleteScores[s_Level - 1] = m_Words.size();
+      s_CompleteScores[s_Level - 1] = static_cast<int>(m_Words.size());
       
       m_AllComplete = true;
       size_t score = 0;
@@ -265,7 +265,7 @@ void LevelScene::KeyDown(SDL_Keycode key)
         if (s == 0) m_AllComplete = false;
         score += s;
       }
-      if (m_AllComplete) EntryScene::SetScore(score);
+      if (m_AllComplete) EntryScene::SetScore(static_cast<int>(score));
       
       return;
     }
