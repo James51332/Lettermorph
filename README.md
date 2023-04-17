@@ -12,10 +12,10 @@ The project is licensed under the MIT license, which is permissive of most open-
 
 ### Libraries
 
-* **SDL3** - z-lib license (https://github.com/libsdl/SDL)
-* **SDL3_image** - z-lib license (https://github.com/libsdl/SDL_image)
-* **SDL3_ttf** - z-lib license (https://github.com/libsdl/SDL_ttf)
-* **SDL3_mixer** - z-lib license (https://github.com/libsdl/SDL_mixer)
+* **SDL3** - z-lib license (https://github.com/libsdl-org/SDL)
+* **SDL3_image** - z-lib license (https://github.com/libsdl-org/SDL_image)
+* **SDL3_ttf** - z-lib license (https://github.com/libsdl-org/SDL_ttf)
+* **SDL3_mixer** - z-lib license (https://github.com/libsdl-org/SDL_mixer)
 
 ### Authors
 
