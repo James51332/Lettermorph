@@ -4,6 +4,10 @@
 #include "style.h"
 #include "level.h"
 
+#include <cstring>
+#include <iostream>
+#include <sstream>
+
 namespace ltrm
 {
 
@@ -11,13 +15,54 @@ std::list<LeaderboardScene::Entry> LeaderboardScene::s_Entries;
 
 LeaderboardScene::LeaderboardScene()
 {
-  AddEntry("James", 70);
-  AddEntry("Wes", 84);
+  m_Leaderboard = SDL_RWFromFile("resources/leaderboard.txt", "r+");
+  if (!m_Leaderboard)
+  {
+    SDL_Log("Failed to open leaderboard: %s", SDL_GetError());
+  }
+  
+  size_t size = SDL_RWsize(m_Leaderboard);
+  std::string buf = std::string(size, ' ');
+  SDL_RWread(m_Leaderboard, &buf[0], size);
+  std::istringstream data(buf);
+  
+  
+  std::string token;
+  std::string name;
+  int score;
+  while (std::getline(data, token))
+  {
+    bool num = true;
+    for (auto c : token) if (!isnumber(c)) num = false;
+    
+    if (num)
+    {
+      score = std::stoi(token);
+      AddEntry(name, score);
+    } else
+    {
+      name = token;
+    }
+  }
 }
 
 LeaderboardScene::~LeaderboardScene()
 {
+  //std::string
+  SDL_RWseek(m_Leaderboard, 0, 0);
   
+  for (auto& entry : s_Entries)
+  {
+    std::string text;
+    text.append(entry.Name);
+    text.append("\n");
+    text.append(std::to_string(entry.Score));
+    text.append("\n");
+    
+    SDL_RWwrite(m_Leaderboard, text.data(), text.length());
+  }
+  
+  SDL_RWclose(m_Leaderboard);
 }
 
 void LeaderboardScene::Load()

@@ -34,6 +34,7 @@ public:
 private:
   float m_LastTime = 0, m_PulseTime = 0;
   
+  SDL_RWops* m_Leaderboard;
   static std::list<Entry> s_Entries;
 };
 
