@@ -8,10 +8,14 @@ namespace ltrm
 std::unordered_map<std::string, Scene*> SceneManager::s_SceneMap;
 Scene* SceneManager::s_ActiveScene = nullptr;
 
+Scene* SceneManager::s_CoveredScene = nullptr;
+bool SceneManager::s_Covered = false;
+bool SceneManager::s_CoverRequested = false;
+
 bool SceneManager::s_ChangeRequested;
 std::string SceneManager::s_ChangeKey;
 
-void SceneManager::Init(Scene *scene, std::string key)
+void SceneManager::Init(Scene *scene, const std::string& key)
 {
 	s_ActiveScene = scene;
   s_ActiveScene->Load();
@@ -27,15 +31,21 @@ void SceneManager::Shutdown()
   }
 }
 
-void SceneManager::AddScene(Scene *scene, std::string key)
+void SceneManager::AddScene(Scene *scene, const std::string& key)
 {
   s_SceneMap.try_emplace(key, scene);
 }
 
-void SceneManager::ChangeScene(std::string key)
+void SceneManager::ChangeScene(const std::string& key)
 {
   s_ChangeRequested = true;
   s_ChangeKey = key;
+}
+
+void SceneManager::CoverScene(const std::string &key)
+{
+  s_ChangeKey = key;
+  s_CoverRequested = true;
 }
 
 void SceneManager::Update()
@@ -53,9 +63,33 @@ void SceneManager::Update()
       return;
     }
     
-    s_ActiveScene->Unload();
+    if (!s_Covered)
+    {
+    	s_ActiveScene->Unload();
+    	s_ActiveScene = scene;
+    	s_ActiveScene->Load();
+    } else
+    {
+      s_ActiveScene = s_CoveredScene;
+      s_Covered = false;
+    }
+    
+  }
+  
+  if (s_CoverRequested)
+  {
+    s_CoverRequested = false;
+    
+    Scene* scene = s_SceneMap.at(s_ChangeKey);
+    if (!scene)
+    {
+      SDL_Log("Unknown Scene! (%s)", s_ChangeKey.c_str());
+      return;
+    }
+    
+    s_CoveredScene = s_ActiveScene;
     s_ActiveScene = scene;
-    s_ActiveScene->Load();
+    s_Covered = true;
   }
 }
 

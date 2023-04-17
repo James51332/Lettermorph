@@ -101,6 +101,7 @@ void LevelScene::Load()
   m_Words.push_back(std::string(""));
   
   m_ScrollOffset = 0;
+  m_Menu = false;
 }
 
 void LevelScene::Update()
@@ -133,6 +134,48 @@ void LevelScene::Update()
   x = Renderer::GetWidth() / 2;
   y = (Renderer::GetHeight() / 2 + 750) - (Style::TileSize + Style::SmallMargin);
   UI::TiledText(m_TargetWord, x, y);
+  
+  m_Menu = UI::Button("Menu", Renderer::GetWidth() - (100 + Style::SmallMargin), 50 + Style::SmallMargin, 200, 100, Style::SmallScale) || m_Menu;
+  if (m_Menu && !m_Won)
+  {
+    float panelWidth = 1000;
+    float panelHeight = 800;
+    float panelX = (Renderer::GetWidth() - panelWidth) / 2;
+    float panelY = (Renderer::GetHeight() - panelHeight) / 2;
+    float buttonPadding = Style::SmallMargin;
+    
+    Renderer::Fill(Color::Dark);
+    Renderer::Stroke(Color::Middle);
+    Renderer::StrokeWeight(5);
+    Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
+    
+    float textHeight;
+    UI::TextSize("Menu", nullptr, &textHeight, 1.2f);
+    UI::Text("Menu", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
+    
+    
+    float btnWidth = 200, btnHeight = 100;
+    float cx = Renderer::GetWidth() / 2;
+    float cy = Renderer::GetHeight() / 2;
+    float lx = cx - (Style::SmallMargin + btnWidth) / 2;
+    float rx = cx + (Style::SmallMargin + btnWidth) / 2;
+    float ty = cy - (Style::SmallMargin + btnHeight) / 2;
+    float by = cy + (Style::SmallMargin + btnHeight) / 2;
+    
+    if (UI::Button("Help", lx, by, btnWidth, btnHeight, Style::SmallScale))
+      SceneManager::CoverScene("help");
+    if (UI::Button("Reset", rx, by, btnWidth, btnHeight, Style::SmallScale))
+      SceneManager::ChangeScene("level");
+    if (UI::Button("Home", lx, ty, btnWidth, btnHeight, Style::SmallScale))
+      SceneManager::ChangeScene("main");
+    if (UI::Button("Settings", rx, ty, btnWidth, btnHeight, Style::SmallScale))
+      SceneManager::CoverScene("settings");
+    
+    if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
+    {
+      m_Menu = false;
+    }
+  }
   
   // Win Screen
   if (m_Won)
@@ -196,6 +239,13 @@ void LevelScene::NextLevel()
 
 void LevelScene::KeyDown(SDL_Keycode key)
 {
+  if (m_Menu)
+  {
+    m_Menu = false;
+    Mixer::Pop();
+    return;
+  }
+  
   if (m_Won)
   {
     if (key == SDLK_RETURN)

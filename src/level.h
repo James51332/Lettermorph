@@ -29,6 +29,7 @@ private:
   size_t m_WordLength = 0;
   
   bool m_Won = false;
+  bool m_Menu = false;
   bool m_AllComplete = false;
   static int s_Level;
   
