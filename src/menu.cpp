@@ -23,11 +23,6 @@ MenuScene::MenuScene()
   m_TitleAnimID = Animator::RegisterAnimation(titleAnim);
 }
 
-MenuScene::~MenuScene()
-{
-  
-}
-
 void MenuScene::Load()
 {
   m_LastTime = SDL_GetTicks();
@@ -38,7 +33,7 @@ void MenuScene::Unload()
   
 }
 
-void MenuScene::Update()
+void MenuScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);
   
@@ -73,16 +68,16 @@ void MenuScene::Update()
   float rx = cx + (layoutWidth - smallBtnWidth) / 2;
   
   if (UI::Button("Play", cx, cy - Style::SmallMargin - btnHeight, btnWidth, btnHeight, scale))
-    SceneManager::ChangeScene("selection");
+    SceneStack::PushScene("selection");
   
   if (UI::Button("Leaderboard", lx, cy, smallBtnWidth, btnHeight, scale))
-    SceneManager::ChangeScene("leaderboard");
+    SceneStack::PushScene("leaderboard");
 
   if (UI::Button("Settings", rx, cy, smallBtnWidth, btnHeight, scale))
-    SceneManager::ChangeScene("settings");
+    SceneStack::PushScene("settings");
   
   if (UI::Button("Help", lx, cy + Style::SmallMargin + btnHeight, smallBtnWidth, btnHeight, scale))
-    SceneManager::ChangeScene("help");
+    SceneStack::PushScene("help");
   
   if (UI::Button("Quit", rx, cy + Style::SmallMargin + btnHeight, smallBtnWidth, btnHeight, scale))
     Game::GetInstance()->Stop();

@@ -26,13 +26,12 @@ public:
   
   void Load();
   void Unload();
-  void Update();
-  void KeyDown(SDL_Keycode key);
+  void Update(float timestep);
   
   static void AddEntry(const std::string& name, int score);
   
 private:
-  float m_LastTime = 0, m_PulseTime = 0;
+  float m_PulseTime = 0;
   
   SDL_RWops* m_Leaderboard;
   static std::list<Entry> s_Entries;

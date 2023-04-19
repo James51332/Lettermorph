@@ -9,17 +9,13 @@ namespace ltrm
 
 class HelpScene : public Scene
 {
-public:
-  HelpScene();
-  ~HelpScene();
-  
+public:  
   void Load();
   void Unload();
-  void Update();
-  void KeyDown(SDL_Keycode key);
+  void Update(float timestep);
   
 private:
-  float m_LastTime = 0, m_PulseTime = 0;
+  float m_PulseTime = 0;
 };
 
 }

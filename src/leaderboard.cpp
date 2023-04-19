@@ -48,7 +48,6 @@ LeaderboardScene::LeaderboardScene()
 
 LeaderboardScene::~LeaderboardScene()
 {
-  //std::string
   SDL_RWseek(m_Leaderboard, 0, 0);
   
   for (auto& entry : s_Entries)
@@ -67,21 +66,16 @@ LeaderboardScene::~LeaderboardScene()
 
 void LeaderboardScene::Load()
 {
-  m_LastTime = SDL_GetTicks();
 }
 
 void LeaderboardScene::Unload()
 {
-  
 }
 
-void LeaderboardScene::Update()
+void LeaderboardScene::Update(float timestep)
 {
-  float time = SDL_GetTicks();
-  m_PulseTime += time - m_LastTime;
-  m_LastTime = time;
-  
-  if (m_PulseTime >= 3000.0f)
+  m_PulseTime += timestep;
+  if (m_PulseTime >= 3.0f)
   {
     m_PulseTime = 0;
     UI::PulseTiles();
@@ -93,7 +87,7 @@ void LeaderboardScene::Update()
   float y = Renderer::GetHeight() / 2 + 2 * (150 + Style::SmallMargin);
   if (UI::Button("Back", Renderer::GetWidth() / 2, y + 100, false))
   {
-    SceneManager::ChangeScene("main");
+    SceneStack::ChangeScene("main");
   }
   
   float panelWidth = 800;
@@ -123,11 +117,6 @@ void LeaderboardScene::Update()
     UI::Text(s.c_str(), x, y, 0.75f);
     place++;
   }
-}
-
-void LeaderboardScene::KeyDown(SDL_Keycode key)
-{
-  
 }
 
 void LeaderboardScene::AddEntry(const std::string &name, int score)

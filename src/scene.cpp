@@ -5,97 +5,132 @@
 namespace ltrm
 {
 
-std::unordered_map<std::string, Scene*> SceneManager::s_SceneMap;
-Scene* SceneManager::s_ActiveScene = nullptr;
+std::unordered_map<std::string, Scene*> SceneStack::s_SceneMap;
+std::vector<Scene*> SceneStack::s_SceneStack;
 
-Scene* SceneManager::s_CoveredScene = nullptr;
-bool SceneManager::s_Covered = false;
-bool SceneManager::s_CoverRequested = false;
+SceneStack::ChangeType SceneStack::s_ChangeType = ChangeType::None;
+Scene* SceneStack::s_ChangeScene;
 
-bool SceneManager::s_ChangeRequested;
-std::string SceneManager::s_ChangeKey;
-
-void SceneManager::Init(Scene *scene, const std::string& key)
+void SceneStack::Init(Scene *scene, const std::string& key)
 {
-	s_ActiveScene = scene;
-  s_ActiveScene->Load();
-  s_SceneMap.try_emplace(key, scene);
+  AddScene(scene, key);
+  s_SceneStack.push_back(scene);
 }
 
-void SceneManager::Shutdown()
+void SceneStack::AddScene(Scene *scene, const std::string& key)
 {
-  s_ActiveScene->Unload();
+  auto [iterator, success] = s_SceneMap.try_emplace(key, scene);
+  if (!success) SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add scene with key %s", key.c_str());
+}
+
+void SceneStack::Shutdown()
+{
+  // Delete all scenes in the SceneStack
   for (auto& scene : s_SceneMap)
   {
     delete scene.second;
   }
 }
 
-void SceneManager::AddScene(Scene *scene, const std::string& key)
+void SceneStack::Reload()
 {
-  s_SceneMap.try_emplace(key, scene);
+  s_ChangeType = ChangeType::Reload;
 }
 
-void SceneManager::ChangeScene(const std::string& key)
+void SceneStack::ChangeScene(const std::string& key)
 {
-  s_ChangeRequested = true;
-  s_ChangeKey = key;
+  s_ChangeType = ChangeType::Change;
+  s_ChangeScene = GetScene(key);
 }
 
-void SceneManager::CoverScene(const std::string &key)
+void SceneStack::PushScene(const std::string &key)
 {
-  s_ChangeKey = key;
-  s_CoverRequested = true;
+  s_ChangeType = ChangeType::Push;
+  s_ChangeScene = GetScene(key);
 }
 
-void SceneManager::Update()
+void SceneStack::PopScene()
 {
-  s_ActiveScene->Update();
+  s_ChangeType = ChangeType::Pop;
+}
+
+void SceneStack::ClearStack()
+{
+  s_ChangeType = ChangeType::Clear;
+}
+
+void SceneStack::Update(float timestep)
+{
+  // First update the active scene
+  s_SceneStack.back()->Update(timestep);
   
-  if (s_ChangeRequested)
+  // If a scene change is requested, move to the other scene.
+  switch (s_ChangeType)
   {
-    s_ChangeRequested = false;
-    
-    Scene* scene = s_SceneMap.at(s_ChangeKey);
-    if (!scene)
+    case ChangeType::None: break;
+    case ChangeType::Change:
     {
-      SDL_Log("Unknown Scene! (%s)", s_ChangeKey.c_str());
-      return;
+      // We can be silent here because an error will be thrown already, just don't switch
+      if (!s_ChangeScene) return;
+      
+      s_SceneStack.back()->Unload();
+      s_SceneStack.back() = s_ChangeScene;
+      s_SceneStack.back()->Load();
+      break;
     }
-    
-    if (!s_Covered)
+    case ChangeType::Push:
     {
-    	s_ActiveScene->Unload();
-    	s_ActiveScene = scene;
-    	s_ActiveScene->Load();
-    } else
-    {
-      s_ActiveScene = s_CoveredScene;
-      s_Covered = false;
+      if (!s_ChangeScene) return;
+      
+      s_SceneStack.back()->Unload();
+      s_SceneStack.push_back(s_ChangeScene);
+      s_SceneStack.back()->Load();
+      break;
     }
-    
+    case ChangeType::Pop:
+    {
+      if (s_SceneStack.size() <= 1)
+      {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to pop scene at bottom of Scene Stack!");
+        return;
+      }
+
+      s_SceneStack.back()->Unload();
+      s_SceneStack.pop_back();
+      s_SceneStack.back()->Load();
+      break;
+    }
+    case ChangeType::Clear:
+    {
+      s_SceneStack.back()->Unload();
+      while (s_SceneStack.size() > 1) s_SceneStack.pop_back();
+      s_SceneStack.back()->Load();
+      
+      break;
+    }
+    case ChangeType::Reload:
+    {
+      s_SceneStack.back()->Unload();
+      s_SceneStack.back()->Load();
+      break;
+    }
   }
   
-  if (s_CoverRequested)
-  {
-    s_CoverRequested = false;
-    
-    Scene* scene = s_SceneMap.at(s_ChangeKey);
-    if (!scene)
-    {
-      SDL_Log("Unknown Scene! (%s)", s_ChangeKey.c_str());
-      return;
-    }
-    
-    s_CoveredScene = s_ActiveScene;
-    s_ActiveScene = scene;
-    s_Covered = true;
-  }
+  // Reset the change state
+  s_ChangeType = ChangeType::None;
+  s_ChangeScene = nullptr;
 }
 
-void SceneManager::KeyDown(SDL_Keycode key)
+void SceneStack::KeyDown(SDL_Keycode key)
 {
-  s_ActiveScene->KeyDown(key);
+  s_SceneStack.back()->KeyDown(key);
+}
+
+Scene* SceneStack::GetScene(const std::string &key)
+{
+  Scene* tmp = s_SceneMap.at(key);
+  if (!tmp) SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find scene with key: %s", key.c_str());
+  return tmp;
 }
 
 }

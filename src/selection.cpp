@@ -8,44 +8,27 @@
 namespace ltrm
 {
 
-SelectionScene::SelectionScene()
-{
-  
-}
-
-SelectionScene::~SelectionScene()
-{
-  
-}
-
 void SelectionScene::Load()
 {
-  m_LastTime = SDL_GetTicks();
 }
 
 void SelectionScene::Unload()
 {
-  
 }
 
-void SelectionScene::Update()
+void SelectionScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);
   
-  // Title
+  // Pulse Title
+  m_PulseTime += timestep;
+  if (m_PulseTime >= 3.0f)
   {
-    float time = SDL_GetTicks();
-    m_PulseTime += time - m_LastTime;
-    m_LastTime = time;
-    
-    if (m_PulseTime >= 3000.0f)
-    {
-      m_PulseTime = 0.0f;
-      UI::PulseTiles();
-    }
-    
-  	UI::TiledText(std::string("Levels"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
+    m_PulseTime = 0.0f;
+    UI::PulseTiles();
   }
+  
+  UI::TiledText(std::string("Levels"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
   
 	// Draw a grid of level buttons
   constexpr float size = 150;
@@ -66,7 +49,7 @@ void SelectionScene::Update()
       if (UI::Button(s.c_str(), x, y, size, size, 0.6f))
       {
         LevelScene::SetLevel(num);
-        SceneManager::ChangeScene("level");
+        SceneStack::PushScene("level");
       }
       
       x += size + margin;
@@ -76,14 +59,7 @@ void SelectionScene::Update()
   }
   
   if(UI::Button("Back", Renderer::GetWidth() / 2, y + 100, false))
-  {
-    SceneManager::ChangeScene("main");
-  }
-}
-
-void SelectionScene::KeyDown(SDL_Keycode key)
-{
-  
+    SceneStack::PopScene();
 }
 
 } 

@@ -11,11 +11,10 @@ class MenuScene : public Scene
 {
 public:
   MenuScene();
-  ~MenuScene();
   
   void Load();
   void Unload();
-  void Update();
+  void Update(float timestep);
   void KeyDown(SDL_Keycode key);
   
 private:

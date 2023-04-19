@@ -80,13 +80,13 @@ void Game::Init()
   m_Window = new Window(desc);
   
   // Scene Manager
-  SceneManager::Init(new MenuScene(), "main");
-  SceneManager::AddScene(new SelectionScene(), "selection");
-  SceneManager::AddScene(new LevelScene(), "level");
-  SceneManager::AddScene(new SettingsScene(), "settings");
-  SceneManager::AddScene(new HelpScene(), "help");
-  SceneManager::AddScene(new LeaderboardScene, "leaderboard");
-  SceneManager::AddScene(new EntryScene(), "entry");
+  SceneStack::Init(new MenuScene(), "main");
+  SceneStack::AddScene(new SelectionScene(), "selection");
+  SceneStack::AddScene(new LevelScene(), "level");
+  SceneStack::AddScene(new SettingsScene(), "settings");
+  SceneStack::AddScene(new HelpScene(), "help");
+  SceneStack::AddScene(new LeaderboardScene, "leaderboard");
+  SceneStack::AddScene(new EntryScene(), "entry");
 }
 
 void Game::Shutdown()
@@ -94,7 +94,7 @@ void Game::Shutdown()
   // Deinitialize
   delete m_Window;
   
-  SceneManager::Shutdown();
+  SceneStack::Shutdown();
   Dictionary::Shutdown();
   UI::Shutdown();
   Mixer::Shutdown();
@@ -122,7 +122,7 @@ void Game::Run()
     Animator::Update(timestep);
     
     UI::Begin();
-    SceneManager::Update();
+    SceneStack::Update(timestep);
     UI::End();
     
     m_Window->SwapBuffers();
@@ -138,7 +138,7 @@ void Game::Stop()
 
 void Game::KeyDown(SDL_Keycode key)
 {
-  SceneManager::KeyDown(key);
+  SceneStack::KeyDown(key);
 }
 
 }

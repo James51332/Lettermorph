@@ -10,16 +10,6 @@ namespace ltrm
 
 int EntryScene::s_Score = 0;
 
-EntryScene::EntryScene()
-{
-  
-}
-
-EntryScene::~EntryScene()
-{
-  
-}
-
 void EntryScene::Load()
 {
   
@@ -30,7 +20,7 @@ void EntryScene::Unload()
   
 }
 
-void EntryScene::Update()
+void EntryScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);
   
@@ -61,7 +51,7 @@ void EntryScene::KeyDown(SDL_Keycode key)
   {
     LeaderboardScene::AddEntry(m_Word, s_Score);
     Mixer::Pop();
-    SceneManager::ChangeScene("leaderboard");
+    SceneStack::ChangeScene("leaderboard");
   }
 }
 

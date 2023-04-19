@@ -15,7 +15,7 @@ public:
   ~LevelScene();
   
   void Load();
-  void Update();
+  void Update(float timestep);
   void Unload();
   void KeyDown(SDL_Keycode key);
   

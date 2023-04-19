@@ -3,46 +3,81 @@
 #include <SDL3/SDL.h>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace ltrm
 {
 
-// The game will always have an active scene
+/**
+ * Pure virtual type that can be inherited from. Child types can be added to Manager
+ * A scene is effectively a layer in the game. One scene is rendered at any given time.
+ * The active scene is updated once per frame.
+ */
 class Scene
 {
 public:
   virtual ~Scene() = default;
   
   virtual void Load() = 0;
-  virtual void Update() = 0;
+  virtual void Update(float timestep) = 0;
   virtual void Unload() = 0;
-  virtual void KeyDown(SDL_Keycode key) = 0;
+  
+  // This function doesn't need to be overriden
+  virtual void KeyDown(SDL_Keycode key) {}
 };
 
-class SceneManager
+/**
+ * Maintains a stack of scenes. The top of the scene is always of the scene that is
+ * presented to the user. This means that some menu ui should be pushed on top of
+ * other scenes, and can be popped back to. Changing the scene results in a switch
+ * of the top level scene.
+ *
+ * All scenes are referred to by std::string names.
+ */
+class SceneStack
 {
 public:
-  static void Init(Scene* scene, const std::string& key = "main");
+  static void Init(Scene* scene, const std::string& key);
+  static void AddScene(Scene* scene, const std::string& key);
+
   static void Shutdown();
   
-  static void AddScene(Scene* scene, const std::string& key);
-  static void ChangeScene(const std::string& key);
-  static void CoverScene(const std::string& key);
+  static void Reload();
   
-  static void Update();
+  // Set's the scene at the top of the scene stack
+  static void ChangeScene(const std::string& key);
+  
+  // Pushes a new scene on the top of the scene stack
+  static void PushScene(const std::string& key);
+  static void PopScene();
+  
+  static void ClearStack();
+  
+  static void Update(float timestep);
   static void KeyDown(SDL_Keycode key);
   
 private:
+  static Scene* GetScene(const std::string& key);
+private:
+  // Allows us to refer to scenes by name
   static std::unordered_map<std::string, Scene*> s_SceneMap;
-  static Scene* s_ActiveScene;
   
-  // This only works for one cover, could make a vector in the future
-  static Scene* s_CoveredScene;
-  static bool s_Covered;
+  // A stack of the scenes. The top of the scene stack is always presentd.
+  static std::vector<Scene*> s_SceneStack;
   
-  static bool s_ChangeRequested;
-  static bool s_CoverRequested;
-  static std::string s_ChangeKey;
+  // We don't want to change a scene during a frame, so this stores the data for after.
+  enum class ChangeType
+  {
+    None,
+    Change,
+    Push,
+    Pop,
+    Clear,
+    Reload
+  };
+  
+  static ChangeType s_ChangeType;
+  static Scene* s_ChangeScene;
 };
 
 }

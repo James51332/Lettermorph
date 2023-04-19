@@ -104,7 +104,7 @@ void LevelScene::Load()
   m_Menu = false;
 }
 
-void LevelScene::Update()
+void LevelScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);
   
@@ -163,13 +163,13 @@ void LevelScene::Update()
     float by = cy + (Style::SmallMargin + btnHeight) / 2;
     
     if (UI::Button("Help", lx, by, btnWidth, btnHeight, Style::SmallScale))
-      SceneManager::CoverScene("help");
+      SceneStack::PushScene("help");
     if (UI::Button("Reset", rx, by, btnWidth, btnHeight, Style::SmallScale))
-      SceneManager::ChangeScene("level");
+      SceneStack::Reload();
     if (UI::Button("Home", lx, ty, btnWidth, btnHeight, Style::SmallScale))
-      SceneManager::ChangeScene("main");
+      SceneStack::ClearStack();
     if (UI::Button("Settings", rx, ty, btnWidth, btnHeight, Style::SmallScale))
-      SceneManager::CoverScene("settings");
+      SceneStack::PushScene("settings");
     
     if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
     {
@@ -202,7 +202,7 @@ void LevelScene::Update()
     float btnWidth = 200, btnHeight = 100;
     if (UI::Button("Back", Renderer::GetWidth() / 2 - Style::SmallMargin / 2 - btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
     {
-      SceneManager::ChangeScene("selection");
+      SceneStack::PopScene();
     }
     
     if (UI::Button("Next", Renderer::GetWidth() / 2 + Style::SmallMargin / 2 + btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
@@ -227,13 +227,13 @@ void LevelScene::NextLevel()
   if (s_Level < numLevels)
   {
     s_Level++;
-    SceneManager::ChangeScene("level");
+    SceneStack::Reload();
   } else
   {
     if (m_AllComplete)
-      SceneManager::ChangeScene("entry");
+      SceneStack::ChangeScene("entry");
     else
-      SceneManager::ChangeScene("selection");
+      SceneStack::PopScene();
   }
 }
 

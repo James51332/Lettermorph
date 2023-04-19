@@ -10,12 +10,9 @@ namespace ltrm
 class EntryScene : public Scene
 {
 public:
-  EntryScene();
-  ~EntryScene();
-  
   void Load();
   void Unload();
-  void Update();
+  void Update(float timestep);
   void KeyDown(SDL_Keycode key);
   
   static void SetScore(int score) { s_Score = score; }

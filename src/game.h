@@ -7,21 +7,23 @@
 namespace ltrm
 {
 	
+// Singleton class containing the run loop for the game.
 class Game
 {
 public:
   Game();
   ~Game();
   
-  void Init();
-  void Shutdown();
+  static Game* GetInstance() { return s_Instance; }
   
   void Run();
   void Stop();
   
   void KeyDown(SDL_Keycode key);
   
-  static Game* GetInstance() { return s_Instance; }
+private:
+  void Init();
+  void Shutdown();
   
 private:
   static Game* s_Instance;
