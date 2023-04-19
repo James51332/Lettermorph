@@ -1,4 +1,4 @@
-#include "dictionary.h"
+#include "Dictionary.h"
 
 #include <SDL3/SDL.h>
 #include <cstdio>

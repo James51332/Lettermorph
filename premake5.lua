@@ -29,6 +29,11 @@ project "Lettermorph"
 		"src/**.cpp",
 		"src/**.h"	
 	}
+	
+	includedirs
+	{
+		"src"
+	}
 
 	sysincludedirs
 	{

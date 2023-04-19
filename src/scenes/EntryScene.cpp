@@ -1,9 +1,11 @@
-#include "entry.h"
-#include "ui.h"
-#include "renderer.h"
-#include "audio.h"
-#include "leaderboard.h"
-#include "style.h"
+#include "EntryScene.h"
+
+#include "core/UI.h"
+#include "core/Renderer.h"
+#include "core/Mixer.h"
+#include "core/Style.h"
+
+#include "scenes/LeaderboardScene.h"
 
 namespace ltrm
 {

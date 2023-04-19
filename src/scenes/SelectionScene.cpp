@@ -1,10 +1,13 @@
-#include "selection.h"
-#include "style.h"
-#include "renderer.h"
-#include "ui.h"
-#include "level.h"
+#include "SelectionScene.h"
+
+#include "core/Style.h"
+#include "core/Renderer.h"
+#include "core/UI.h"
+
+#include "scenes/LevelScene.h"
 
 #include <string>
+
 namespace ltrm
 {
 

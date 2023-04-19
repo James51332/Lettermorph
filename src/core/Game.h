@@ -1,6 +1,6 @@
 #pragma once
 
-#include "window.h"
+#include "core/Window.h"
 
 #include <SDL3/SDL.h>
 

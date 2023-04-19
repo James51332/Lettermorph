@@ -1,6 +1,7 @@
-#include "renderer.h"
-#include "game.h"
-#include "style.h"
+#include "Renderer.h"
+
+#include "core/Game.h"
+#include "core/Style.h"
 
 #include <SDL3/SDL_image.h>
 

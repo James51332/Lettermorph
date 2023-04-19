@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene.h"
+#include "core/Scene.h"
 
 #include <vector>
 #include <string>

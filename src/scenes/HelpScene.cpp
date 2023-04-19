@@ -1,7 +1,8 @@
-#include "help.h"
-#include "ui.h"
-#include "style.h"
-#include "renderer.h"
+#include "HelpScene.h"
+
+#include "core/UI.h"
+#include "core/Style.h"
+#include "core/Renderer.h"
 
 namespace ltrm
 {

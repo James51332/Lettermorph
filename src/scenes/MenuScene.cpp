@@ -1,11 +1,12 @@
-#include "menu.h"
-#include "ui.h"
-#include "renderer.h"
-#include "style.h"
-#include "animation.h"
-#include "input.h"
-#include "game.h"
-#include "audio.h"
+#include "MenuScene.h"
+
+#include "core/UI.h"
+#include "core/Renderer.h"
+#include "core/Style.h"
+#include "core/Animation.h"
+#include "core/Input.h"
+#include "core/Game.h"
+#include "core/Mixer.h"
 
 namespace ltrm
 {

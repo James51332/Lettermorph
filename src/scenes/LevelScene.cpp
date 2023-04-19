@@ -1,12 +1,13 @@
-#include "level.h"
+#include "LevelScene.h"
 
-#include "renderer.h"
-#include "dictionary.h"
-#include "ui.h"
-#include "style.h"
-#include "animation.h"
-#include "audio.h"
-#include "entry.h"
+#include "core/Renderer.h"
+#include "core/Dictionary.h"
+#include "core/UI.h"
+#include "core/Style.h"
+#include "core/Animation.h"
+#include "core/Mixer.h"
+
+#include "scenes/EntryScene.h"
 
 #include <SDL3/SDL.h>
 #include <cstring>

@@ -1,8 +1,10 @@
-#include "leaderboard.h"
-#include "ui.h"
-#include "renderer.h"
-#include "style.h"
-#include "level.h"
+#include "LeaderboardScene.h"
+
+#include "core/UI.h"
+#include "core/Renderer.h"
+#include "core/Style.h"
+
+#include "scenes/LevelScene.h"
 
 #include <cstring>
 #include <iostream>

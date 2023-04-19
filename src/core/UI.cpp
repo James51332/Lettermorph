@@ -1,9 +1,10 @@
-#include "ui.h"
-#include "input.h"
-#include "renderer.h"
-#include "style.h"
-#include "animation.h"
-#include "audio.h"
+#include "UI.h"
+
+#include "core/Input.h"
+#include "core/Renderer.h"
+#include "core/Style.h"
+#include "core/Animation.h"
+#include "core/Mixer.h"
 
 #include <SDL3/SDL_ttf.h>
 

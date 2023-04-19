@@ -1,5 +1,6 @@
-#include "input.h"
-#include "window.h"
+#include "Input.h"
+
+#include "core/Window.h"
 
 #include <cstring>
 

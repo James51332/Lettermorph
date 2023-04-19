@@ -6,13 +6,6 @@
 namespace ltrm
 {
 
-// The animation system for the game should be relatively simple.
-// Anytime an animation is needed, a new animation should be registered
-// with the animator, which will update the animation each frame, and return
-// an adjusted value which can be queried by the application. Usually, one
-// float should be enough to animate whatever we need. However, we'll also
-// create a color animation to represent fades between colors.
-
 enum class AnimationType
 {
 	Lerp,
@@ -51,6 +44,14 @@ struct ColorAnimation
   SDL_Color End = {255, 255, 255, 255};
 };
 
+
+/** The animation system for the game should be relatively simple.
+ * Anytime an animation is needed, a new animation should be registered
+ * with the animator, which will update the animation each frame, and return
+ * an adjusted value which can be queried by the application. Usually, one
+ * float should be enough to animate whatever we need. However, we'll also
+ * create a color animation to represent fades between colors.
+ */
 class Animator
 {
 public:

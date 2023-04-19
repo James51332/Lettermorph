@@ -1,7 +1,7 @@
 #pragma once
 
-#include "window.h"
-#include "texture.h"
+#include "core/Window.h"
+#include "core/Texture.h"
 
 #include <SDL3/SDL.h>
 
