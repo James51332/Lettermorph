@@ -1,7 +1,7 @@
 #include "Window.h"
 
 #include "core/Game.h"
-#include "core/Renderer.h"
+#include "core/renderer/Renderer.h"
 #include "core/Input.h"
 
 namespace ltrm

@@ -1,12 +1,13 @@
 #include "Game.h"
 
-#include "core/Renderer.h"
-#include "core/Texture.h"
 #include "core/Scene.h"
 #include "core/Dictionary.h"
 #include "core/UI.h"
 #include "core/Animation.h"
 #include "core/Mixer.h"
+
+#include "core/renderer/Renderer.h"
+#include "core/renderer/Texture.h"
 
 #include "scenes/LevelScene.h"
 #include "scenes/MenuScene.h"
@@ -123,9 +124,9 @@ void Game::Run()
     lastTime = SDL_GetTicks();
     Animator::Update(timestep);
     
-    UI::Begin();
+    UI::BeginFrame();
     SceneStack::Update(timestep);
-    UI::End();
+    UI::EndFrame();
     
     m_Window->SwapBuffers();
   }

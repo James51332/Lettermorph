@@ -2,7 +2,7 @@
 
 #include "core/UI.h"
 #include "core/Style.h"
-#include "core/Renderer.h"
+#include "core/renderer/Renderer.h"
 
 namespace ltrm
 {

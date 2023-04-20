@@ -7,7 +7,8 @@
 namespace ltrm
 {
 	
-// Singleton class containing the run loop for the game.
+/** Singleton class containing the run loop for the game.
+*/
 class Game
 {
 public:

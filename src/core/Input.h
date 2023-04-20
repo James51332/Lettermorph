@@ -5,6 +5,8 @@
 namespace ltrm
 {
 
+/** Input State Manager for the application to query.
+ */
 class Input
 {
   friend class Window;

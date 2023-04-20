@@ -1,7 +1,7 @@
 #include "SelectionScene.h"
 
 #include "core/Style.h"
-#include "core/Renderer.h"
+#include "core/renderer/Renderer.h"
 #include "core/UI.h"
 
 #include "scenes/LevelScene.h"

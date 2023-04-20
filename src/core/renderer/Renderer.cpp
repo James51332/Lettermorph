@@ -3,6 +3,8 @@
 #include "core/Game.h"
 #include "core/Style.h"
 
+#include "core/renderer/RenderAPI.h"
+
 #include <SDL3/SDL_image.h>
 
 namespace ltrm
@@ -18,11 +20,26 @@ SDL_Color Renderer::s_StrokeColor = Color::Dark;
 
 void Renderer::Init(SDL_Window *window)
 {
-  SDL_assert(!s_Initalized); // We can only use one renderer per app (design isn't perfect b/c initialized by non-singleton)
+  // We can only use one renderer per app (design isn't perfect b/c initialized by non-singleton)
+  SDL_assert(!s_Initalized);
   s_Initalized = true;
   
-  // TODO: RenderAPIs
-  s_Renderer = SDL_CreateRenderer(window, "metal", SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  std::vector<RenderAPI::API> APIs = RenderAPI::QueryAvaiableAPIs();
+  for (auto api : APIs)
+  {
+    SDL_Log("RenderAPI Found: %s", RenderAPI::GetIdentifierFromAPI(api));
+  }
+  
+  // TODO: User should be able to select this
+  RenderAPI::API api = APIs[0];
+  SDL_Log("Creating Renderer with API: %s", RenderAPI::GetIdentifierFromAPI(api));
+  
+  s_Renderer = SDL_CreateRenderer(window, RenderAPI::GetIdentifierFromAPI(api), SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  if (!s_Renderer)
+  {
+    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create renderer! %s", SDL_GetError());
+    return;
+  }
   
   s_FontTexture = new Texture("resources/letters.png");
 }

@@ -1,13 +1,16 @@
 #pragma once
 
 #include "core/Window.h"
-#include "core/Texture.h"
+
+#include "core/renderer/Texture.h"
 
 #include <SDL3/SDL.h>
 
 namespace ltrm
 {
 
+/** Renderer class built on top of SDL_Renderer
+ */
 class Renderer
 {
   friend class Window;

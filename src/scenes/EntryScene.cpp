@@ -1,7 +1,7 @@
 #include "EntryScene.h"
 
 #include "core/UI.h"
-#include "core/Renderer.h"
+#include "core/renderer/Renderer.h"
 #include "core/Mixer.h"
 #include "core/Style.h"
 

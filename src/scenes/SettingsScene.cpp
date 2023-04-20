@@ -1,6 +1,6 @@
 #include "SettingsScene.h"
 
-#include "core/Renderer.h"
+#include "core/renderer/Renderer.h"
 #include "core/Style.h"
 #include "core/UI.h"
 #include "core/Mixer.h"

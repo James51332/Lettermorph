@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Texture.h"
+#include "core/renderer/Texture.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_ttf.h>
@@ -11,15 +11,17 @@
 namespace ltrm
 {
 
+/** Immediate Mode UI System with Buttons, Sliders, and Text
+ */
 class UI
 {
 public:
   static void Init();
   static void Shutdown();
   
-  static void Begin();
-  static void End();
-
+  static void BeginFrame();
+  static void EndFrame();
+  
   static bool Button(const char*, float, float, bool large); // Button with automatic padding
   static bool Button(const char*, float, float, float, float, float scale); // Button with fixed size
   

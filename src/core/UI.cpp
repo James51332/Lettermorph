@@ -1,7 +1,7 @@
 #include "UI.h"
 
 #include "core/Input.h"
-#include "core/Renderer.h"
+#include "core/renderer/Renderer.h"
 #include "core/Style.h"
 #include "core/Animation.h"
 #include "core/Mixer.h"
@@ -60,13 +60,13 @@ void UI::Shutdown()
   }
 }
 
-void UI::Begin()
+void UI::BeginFrame()
 {
   m_CurrentSlider = 0;
   s_Hovered = false;
 }
 
-void UI::End()
+void UI::EndFrame()
 {
   Animator::SetColorAnimationActive(s_HoverAnimation, s_Hovered);
   if (!s_Hovered) Animator::ResetColorAnimation(s_HoverAnimation);
