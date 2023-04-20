@@ -10,14 +10,18 @@ enum class AnimationType
 {
 	Lerp,
   Wave,
-  Pulse
+  Pulse,
+  EaseInOut
 };
 
+/** Animations are structures that contains some data that is updated by the animation engine.
+ * They can be created and then Registered using Animator::RegisterAnimation(). All animations
+ * are either active or inactive, and active animations are 
+ */
 struct Animation
 {
   AnimationType Type = AnimationType::Lerp;
   
-  // TODO: We could use bit logic to make this type smaller (probably unneeded though)
   bool Active = false;
   bool ResetOnInactive = true;
   bool ResetOnComplete = false;
@@ -49,8 +53,8 @@ struct ColorAnimation
  * Anytime an animation is needed, a new animation should be registered
  * with the animator, which will update the animation each frame, and return
  * an adjusted value which can be queried by the application. Usually, one
- * float should be enough to animate whatever we need. However, we'll also
- * create a color animation to represent fades between colors.
+ * float should be enough to animate whatever we need. However, we also
+ * have an API create a color animation to represent fades between colors.
  */
 class Animator
 {
@@ -63,6 +67,7 @@ public:
   
   static void SetAnimationActive(int ID, bool active = true);
   static void SetColorAnimationActive(int ID, bool active = true);
+  
   static void QueueAnimationActive(int ID, float delay);
   static void QueueColorAnimationActive(int ID, float delay);
   

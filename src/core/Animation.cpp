@@ -68,7 +68,7 @@ void Animator::ResetAnimation(int ID)
     case AnimationType::Wave:
     {
       anim.Progress = 0;
-      anim.Value = anim.Min + anim.Max;
+      anim.Value = (anim.Min + anim.Max) / 2;
       break;
     }
     case AnimationType::Pulse:
@@ -77,6 +77,13 @@ void Animator::ResetAnimation(int ID)
       anim.Value = anim.Min;
       break;
     }
+    case AnimationType::EaseInOut:
+    {
+      anim.Progress = 0;
+      anim.Value = anim.Min;
+      break;
+    }
+    default: break;
   }
 }
 
@@ -148,7 +155,7 @@ static void waveUpdate(Animation& animation, float timestep)
       if (!animation.Loop)
       {
         animation.Active = false;
-        animation.Progress = 0;
+        animation.Progress = 1;
       } else
       {
         animation.Progress = 0;
@@ -174,10 +181,46 @@ static void pulseUpdate(Animation& animation, float timestep)
     if (animation.Progress >= 1)
     {
       animation.Value = (animation.Max + animation.Min) / 2;
+      
       if (!animation.Loop)
       {
         animation.Active = false;
+        animation.Progress = 1;
+      } else
+      {
         animation.Progress = 0;
+      }
+    }
+  }
+}
+
+static void easeInOutUpdate(Animation& animation, float timestep)
+{
+  if (!animation.Active)
+  {
+    if (!animation.ResetOnInactive && animation.Progress < 1) return;
+    if (!animation.ResetOnComplete && animation.Progress == 1) return;
+    
+    animation.Value = animation.Min;
+    animation.Progress = 0;
+  } else
+  {
+    animation.Progress += timestep / animation.Duration;
+    
+    // Credit to https://stackoverflow.com/questions/13462001/ease-in-and-ease-out-animation-formula
+    // for simple parametric equation for ease in/out animation.
+    float sqt = animation.Progress * animation.Progress;
+    float easedProgress = sqt / (2.0f * (sqt - animation.Progress) + 1.0f);
+    animation.Value = animation.Min + easedProgress * (animation.Max - animation.Min);
+    
+    if (animation.Value >= animation.Max)
+    {
+      animation.Value = animation.Max; // We'll still keep it at the end until the next frame
+      
+      if (!animation.Loop)
+      {
+        animation.Active = false;
+        animation.Progress = 1;
       } else
       {
         animation.Progress = 0;
@@ -188,6 +231,35 @@ static void pulseUpdate(Animation& animation, float timestep)
 
 static void colorUpdate(ColorAnimation& animation, float timestep)
 {
+  if (!animation.Active)
+  {
+    if (!animation.ResetOnInactive && animation.Progress < 1) return;
+    if (!animation.ResetOnComplete && animation.Progress == 1) return;
+    
+    animation.Progress = 0;
+    animation.Value = animation.Start;
+  } else
+  {
+    animation.Progress += timestep / animation.Duration;
+    
+    animation.Value.r = animation.Progress * static_cast<float>(animation.End.r - animation.Start.r) + animation.Start.r;
+    animation.Value.g = animation.Progress * static_cast<float>(animation.End.g - animation.Start.g) + animation.Start.g;
+    animation.Value.b = animation.Progress * static_cast<float>(animation.End.b - animation.Start.b) + animation.Start.b;
+    animation.Value.a = animation.Progress * static_cast<float>(animation.End.a - animation.Start.a) + animation.Start.a;
+    
+    if (animation.Progress >= 1)
+    {
+      animation.Value = animation.End;
+      if (!animation.Loop)
+      {
+        animation.Active = false;
+        animation.Progress = 1;
+      } else
+      {
+        animation.Progress = 0;
+      }
+    }
+  }
 }
 
 void Animator::Update(float timestep)
@@ -200,7 +272,10 @@ void Animator::Update(float timestep)
     if (animation.Delay <= 0.0f)
     {
       SetAnimationActive(animation.ID);
-      s_QueuedAnimations.erase(s_QueuedAnimations.begin() + index); // Not the best, but it's find
+      s_QueuedAnimations.erase(s_QueuedAnimations.begin() + index);
+      
+      // We don't want to increase the index because an element has been removed from the vector
+      continue;
     }
     
     index++;
@@ -212,7 +287,9 @@ void Animator::Update(float timestep)
     if (animation.Delay <= 0.0f)
     {
       SetColorAnimationActive(animation.ID);
-      s_QueuedAnimations.erase(s_QueuedAnimations.begin() + index); // Not the best, but it's find
+      s_QueuedAnimations.erase(s_QueuedAnimations.begin() + index);
+      
+      continue;
     }
     
     index++;
@@ -236,6 +313,11 @@ void Animator::Update(float timestep)
       case AnimationType::Pulse:
       {
         pulseUpdate(animation, timestep);
+        break;
+      }
+      case AnimationType::EaseInOut:
+      {
+        easeInOutUpdate(animation, timestep);
         break;
       }
       default: break;

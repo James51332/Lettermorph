@@ -57,6 +57,9 @@ private:
   // This will enable us to do cascaded pulses
   static std::vector<int> s_PulseAnimations;
   
+  static bool s_Hovered;
+  static int s_HoverAnimation;
+  
   static std::vector<bool> m_SliderStates;
   static int m_CurrentSlider;
 };

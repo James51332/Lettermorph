@@ -28,9 +28,10 @@ public:
 
 /**
  * Maintains a stack of scenes. The top of the scene is always of the scene that is
- * presented to the user. This means that some menu ui should be pushed on top of
- * other scenes, and can be popped back to. Changing the scene results in a switch
- * of the top level scene.
+ * presented to the user.
+ *
+ * Some menu ui should be pushed on top of other scenes, and can be popped back to.
+ * Changing the scene results in a switch of the top level scene.
  *
  * All scenes are referred to by std::string names.
  */

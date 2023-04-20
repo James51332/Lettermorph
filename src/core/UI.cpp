@@ -16,6 +16,9 @@ std::unordered_map<std::string, UI::TextTexture*> UI::s_TextTextures;
 
 std::vector<int> UI::s_PulseAnimations;
 
+bool UI::s_Hovered = false;
+int UI::s_HoverAnimation;
+
 std::vector<bool> UI::m_SliderStates;
 int UI::m_CurrentSlider = 0;
 
@@ -32,9 +35,19 @@ void UI::Init()
   pulse.Min = 0;
   pulse.Max = 10;
   pulse.Loop = false;
+  pulse.ResetOnComplete = true;
   pulse.Duration = 0.1;
   for (size_t i = 0; i < 15; i++)
     s_PulseAnimations.push_back(Animator::RegisterAnimation(pulse));
+  
+  ColorAnimation hover;
+  hover.Start = Color::Dark;
+  hover.End = Color::Middle;
+  hover.Duration = 0.2f;
+  hover.ResetOnComplete = false;
+  hover.ResetOnInactive = true;
+  hover.Loop = false;
+  s_HoverAnimation = Animator::RegisterColorAnimation(hover);
 }
 
 void UI::Shutdown()
@@ -50,10 +63,14 @@ void UI::Shutdown()
 void UI::Begin()
 {
   m_CurrentSlider = 0;
+  s_Hovered = false;
 }
 
 void UI::End()
 {
+  Animator::SetColorAnimationActive(s_HoverAnimation, s_Hovered);
+  if (!s_Hovered) Animator::ResetColorAnimation(s_HoverAnimation);
+  
   if (!Input::MouseDown(SDL_BUTTON_LEFT))
   {
     for (size_t i = 0; i < m_SliderStates.size(); i++)
@@ -76,7 +93,10 @@ bool UI::Button(const char* text, float x, float y, float w, float h, float scal
   bool highlighted = SDL_PointInRectFloat(&mouse, &bounds);
   
   if (highlighted)
-    Renderer::Fill(Color::Middle);
+  {
+    s_Hovered = true;
+    Renderer::Fill(Animator::QueryColorAnimation(s_HoverAnimation).Value);
+  }
   else
     Renderer::Fill(Color::Dark);
   
@@ -104,6 +124,8 @@ bool UI::Slider(float x, float y, float w, float h, float lower, float upper, fl
   
   if (m_SliderStates[slider])
   {
+    s_Hovered = true;
+    
     float mousePercent = (mouse.x - boxLeft) / (boxSpace);
     if (mousePercent < 0) mousePercent = 0;
     if (mousePercent > 1) mousePercent = 1;
@@ -118,7 +140,7 @@ bool UI::Slider(float x, float y, float w, float h, float lower, float upper, fl
   float boxPos = (value / (upper - lower)) * (boxSpace) + boxLeft;
 	Renderer::Stroke(Color::Light);
   Renderer::StrokeWeight(5);
-  Renderer::Fill(m_SliderStates[slider] ? Color::Middle : Color::Dark);
+  Renderer::Fill(m_SliderStates[slider] ? Animator::QueryColorAnimation(s_HoverAnimation).Value : Color::Dark);
   Renderer::Rect(boxPos - boxSize / 2, y + (h - boxSize) / 2 , boxSize, boxSize);
   
   std::string valueText = std::to_string(static_cast<int>(value));
