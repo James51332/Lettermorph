@@ -12,16 +12,7 @@ R"(The goal of Lettermorph is to connect one word that is given to another by ch
 
 void HelpScene::Update(float timestep)
 {
-  Renderer::Clear(Color::Accent);
-  
-  static float pulseTime = 0;
-  pulseTime += timestep;
-  if (pulseTime >= 3.0f)
-  {
-    pulseTime = 0;
-    UI::PulseTiles();
-  }
-  UI::TiledText(std::string("Help"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
+  UI::Title("Help");
   
   float y = Renderer::GetHeight() / 2 + 2 * (150 + Style::SmallMargin);
   if (UI::Button("Back", Renderer::GetWidth() / 2, y + 100, false))

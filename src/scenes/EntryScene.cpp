@@ -14,9 +14,8 @@ int EntryScene::s_Score = 0;
 
 void EntryScene::Update(float timestep)
 {
-  Renderer::Clear(Color::Accent);
-  
   UI::Text("Enter your name!", Renderer::GetWidth() / 2, Renderer::GetHeight() / 2 - 200, 1.2f);
+  
   float width = UI::TiledTextWidth(m_Word.length() >= 3 ? m_Word.length() : 3);
   UI::TiledText(m_Word, (Renderer::GetWidth() - width) / 2, Renderer::GetHeight() / 2, 1, m_Word.length() >= 3 ? m_Word.length() : 3);
 }

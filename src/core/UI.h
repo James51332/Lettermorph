@@ -40,6 +40,8 @@ public:
   // If size != 0, the word is left aligned and centered vertically around (x, y)
   static void TiledText(const std::string&, float, float, int pulseType = 0, size_t size = 0);
   
+  static void Title(const std::string& title, size_t row = 0);
+  
   static void PulseLastTile();
   static void PulseTiles(float delay = 0.0f);
   
@@ -66,6 +68,7 @@ private:
   static TTF_Font* s_Font;
   
   // This will enable us to do cascaded pulses
+  static float s_PulseTime;
   static std::vector<int> s_PulseAnimations;
   
   static bool s_Hovered;

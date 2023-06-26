@@ -13,21 +13,9 @@ namespace ltrm
 
 void MenuScene::Update(float timestep)
 {
-  Renderer::Clear(Color::Accent);
-  
-  static float pulseTime = 0;
-  pulseTime += timestep;
-  if (pulseTime >= 3.0f)
-  {
-    pulseTime = 0;
-    UI::PulseTiles();
-  }
+  UI::Title("Letter", 0); // Split title into two lines (0th and 1st rows)
+  UI::Title("Morph", 1);
 
-  float x = Renderer::GetWidth() / 2;
-  float y = Style::SmallMargin + Style::TileSize / 2;
-  UI::TiledText(std::string("Letter"), x, y, 2);
-  UI::TiledText(std::string("morph"), x, y + Style::TileSize + Style::SmallMargin, 2);
-  
 	constexpr float btnWidth = 800;
   constexpr float btnHeight = 120;
   constexpr float scale = 0.7f;

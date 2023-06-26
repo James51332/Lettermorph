@@ -5,6 +5,7 @@
 #include "core/UI.h"
 #include "core/Animation.h"
 #include "core/Mixer.h"
+#include "core/Style.h"
 
 #include "core/renderer/Renderer.h"
 #include "core/renderer/Texture.h"
@@ -134,6 +135,7 @@ void Game::Run()
     UI::BeginFrame();
     
     // Update each layer in the scene stack that is passed.
+    Renderer::Clear(Color::Accent);
     SceneStack::Update(timestep);
     
     UI::EndFrame();

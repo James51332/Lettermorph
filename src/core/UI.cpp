@@ -14,6 +14,7 @@ namespace ltrm
 TTF_Font* UI::s_Font;
 std::unordered_map<std::string, UI::TextTexture*> UI::s_TextTextures;
 
+float UI::s_PulseTime = 0;
 std::vector<int> UI::s_PulseAnimations;
 
 bool UI::s_Hovered = false;
@@ -62,8 +63,26 @@ void UI::Shutdown()
 
 void UI::BeginFrame()
 {
-  m_CurrentSlider = 0;
+  m_CurrentSlider = 0; // Reset the slider IDs, so sliders get the same each frame (with static UI)
   s_Hovered = false;
+  
+  // Handle Pulsing Tiles
+  {
+    // Init Timer (runs once)
+    static float pulseTime = 0.0f;
+    static float lastTime = SDL_GetTicks();
+    
+    // Update (each call)
+    float curTime = SDL_GetTicks();
+    pulseTime += (curTime - lastTime);
+    lastTime = curTime;
+    
+    if (pulseTime >= 3000.0f) // Time since last pulse >= 3000ms (3 sec)
+    {
+      pulseTime = 0.0f; // Reset timer
+      PulseTiles();
+    }
+  }
 }
 
 void UI::EndFrame()
@@ -258,6 +277,32 @@ void UI::PulseLastTile()
   Animator::SetAnimationActive(s_PulseAnimations[0]);
 }
 
+void UI::Title(const std::string &title, size_t row)
+{
+  // Setup Render Settings for all tiles
+  Renderer::NoStroke();
+  Renderer::Fill(Color::Dark);
+  
+  // It's not the most optimal, but I don't want to render too many letters in one line.
+  size_t size = title.length();
+  
+  float x = Renderer::GetWidth() * 0.5f - TiledTextWidth(size) * 0.5f;
+  float y = Style::SmallMargin + Style::TileSize / 2 + row * (Style::SmallMargin + Style::TileSize);
+  
+  for (size_t i = 0; i < size; i++)
+  {
+    // We use multiple animations for the various tiles. This fetches the correct animation for the tile.
+    float pulseValue = Animator::QueryAnimation(s_PulseAnimations[i]).Value;
+    float letterSize = Style::LetterSize + pulseValue;
+    char c = title[i];
+  
+    Renderer::Rect(x - pulseValue / 2, y - pulseValue / 2, Style::TileSize + pulseValue, Style::TileSize + pulseValue);
+    Renderer::Letter(c, x + Style::TileSize / 2 - letterSize / 2, y + Style::TileSize/2 - letterSize / 2, letterSize);
+  
+    x += Style::TileSize + Style::SmallMargin;
+  }
+}
+
 void UI::PulseTiles(float delay)
 {
   for (auto id : s_PulseAnimations)
@@ -280,7 +325,6 @@ float UI::TiledTextWidth(size_t length)
 {
   return length * (Style::TileSize + Style::SmallMargin) - Style::SmallMargin;
 }
-
 
 void UI::ButtonSize(const char* text, float* w, float* h, bool large)
 {

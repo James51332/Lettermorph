@@ -13,17 +13,7 @@ namespace ltrm
 
 void SelectionScene::Update(float timestep)
 {
-  Renderer::Clear(Color::Accent);
-  
-  // Pulse Title
-  static float pulseTime = 0;
-  pulseTime += timestep;
-  if (pulseTime >= 3.0f)
-  {
-    pulseTime = 0;
-    UI::PulseTiles();
-  }
-  UI::TiledText(std::string("Levels"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
+  UI::Title("Levels");
   
 	// Draw a grid of level buttons
   constexpr float size = 150;

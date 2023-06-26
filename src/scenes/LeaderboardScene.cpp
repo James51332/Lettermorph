@@ -67,16 +67,7 @@ LeaderboardScene::~LeaderboardScene()
 
 void LeaderboardScene::Update(float timestep)
 {
-  Renderer::Clear(Color::Accent);
-
-  static float pulseTime = 0;
-  pulseTime += timestep;
-  if (pulseTime >= 3.0f)
-  {
-    pulseTime = 0;
-    UI::PulseTiles();
-  }
-  UI::TiledText(std::string("LEADERBOARD"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
+  UI::Title("Leaderboard");
   
   float y = Renderer::GetHeight() / 2 + 2 * (150 + Style::SmallMargin);
   if (UI::Button("Back", Renderer::GetWidth() / 2, y + 100, false))
