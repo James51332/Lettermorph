@@ -9,46 +9,20 @@
 
 #include "scenes/EntryScene.h"
 
+#include "Levels.h"
+
 #include <SDL3/SDL.h>
 #include <cstring>
 
 namespace ltrm
 {
 
-// 25 Levels and Solutions (not necessarily optimal/only)
-
-// I came up with most of these by coming up with a starting
-// and ending word and solving. Then I ranked by difficulty.
-
-static constexpr size_t numLevels = 15;
-static constexpr const char* levels[] = {
-  // EASY
-  "CAT-BAR", // CAT -> CAR -> BAR
-  "RATE-LAME", // RATE -> LATE -> LAME
-  "PANT-CART", // PANT -> PART -> CART
-  "SPAT-STAR", // STAR -> STAT -> SPAT
-  "MAGIC-PANIC", // MAGIC -> MANIC -> PANIC
-  
-  // MEDIUM
-  "MILE-HARE", // MILE -> MALE -> MARE -> HARE -> HARP
-  "LOOP-CREW", // CREW -> CROW -> CROP -> COOP -> LOOP
-  "SPACE-SHORT", // SPACE -> SPARE -> SPORE -> SHORE -> SHORT
-  "FINE-RICE", // RICE -> RACE -> LACE -> LINE -> FINE
-  "WILD-TANK", // TANK -> TALK -> TALL -> WALL -> WILL -> WILD
-  
-  // VERY HARD
-  "PACE-DARE", // DARE -> DATE -> MATE -> MACE -> PACE
-  "GRID-WAND", // WAND -> WANT -> WAIT -> WRIT -> GRIT -> GRID
-  "PANE-PAIN", // PAIN -> PAID -> LAID -> LAND -> LANE -> PANE
-  "PAIR-LEAD", // PAIR -> HAIR -> HEIR -> HEAR -> HEAD -> LEAD -> BEAR
-  "STEEP-SPEAK", // SPEAK -> SPEAR -> SHEAR -> SHEER -> SHEEP -> STEEP
-};
-
 int LevelScene::s_Level = 1;
 std::vector<int> LevelScene::s_CompleteScores;
 
 LevelScene::LevelScene()
 {
+  // Register animations that are used within the scene to the animator
   Animation shake;
   shake.Type = AnimationType::Wave;
   shake.Min = -15;
@@ -65,30 +39,22 @@ LevelScene::LevelScene()
   scroll.Loop = false;
   m_ScrollAnimation = Animator::RegisterAnimation(scroll);
   
+  // Set all scores to zero.
   for (size_t i = 0; i < numLevels; i++)
     s_CompleteScores.push_back(0);
 }
 
-LevelScene::~LevelScene()
-{
-}
-
 void LevelScene::SetLevel(int level)
 {
-  if (level < 1 || level > numLevels)
-  {
-    SDL_Log("Level exceeds max range! (%d)", level);
-    return;
-  }
-  
+  SDL_assert(level >= 1 || level <= numLevels);
   s_Level = level;
 }
 
 void LevelScene::Load()
 {
   std::string levelString = levels[s_Level - 1];
-  const char* delim = "-";
   
+  const char* delim = "-";
   char* token = strtok(&levelString[0], delim);
   m_TargetWord = std::string(token);
   m_WordLength = m_TargetWord.length();
@@ -99,16 +65,14 @@ void LevelScene::Load()
     m_Words.push_back(std::string(token));
     token = strtok(nullptr, delim);
   }
-  m_Words.push_back(std::string(""));
+  m_Words.push_back(std::string());
   
   m_ScrollOffset = 0;
-  m_Menu = false;
+  m_MenuIsOpen = false;
 }
 
 void LevelScene::Update(float timestep)
 {
-  Renderer::Clear(Color::Accent);
-  
   // Handle Scroll Animation
   {
     const Animation& anim = Animator::QueryAnimation(m_ScrollAnimation);
@@ -123,61 +87,44 @@ void LevelScene::Update(float timestep)
   // Draw working words
   float y = (Renderer::GetHeight() / 2 - 750) - m_ScrollOffset - Animator::QueryAnimation(m_ScrollAnimation).Value;
   float x = (Renderer::GetWidth() - UI::TiledTextWidth(m_WordLength)) / 2;
-  int num = 0;
+  size_t index = 0;
   for (auto& word : m_Words)
   {
-    if (num == m_Words.size() - 1) x += Animator::QueryAnimation(m_ShakeAnimation).Value;
-    UI::TiledText(word, x, y + num * (Style::TileSize + Style::SmallMargin), num == m_Words.size() - 1 ? 1 : 0, m_WordLength);
-    num++;
+    bool lastWord = (index == m_Words.size() - 1);
+    if (lastWord) x += Animator::QueryAnimation(m_ShakeAnimation).Value;
+    
+    UI::TiledText(word,
+                  x,
+                  y + index * (Style::TileSize + Style::SmallMargin),
+                  lastWord ? 1 : 0, m_WordLength);
+    index++;
   }
   
-  // Draw target words
-  x = Renderer::GetWidth() / 2;
-  y = (Renderer::GetHeight() / 2 + 750) - (Style::TileSize + Style::SmallMargin);
-  UI::TiledText(m_TargetWord, x, y);
-  
-  m_Menu = UI::Button("Menu", Renderer::GetWidth() - (100 + Style::SmallMargin), 50 + Style::SmallMargin, 200, 100, Style::SmallScale) || m_Menu;
-  if (m_Menu && !m_Won)
+  // Draw target word
   {
-    float panelWidth = 1000;
-    float panelHeight = 800;
-    float panelX = (Renderer::GetWidth() - panelWidth) / 2;
-    float panelY = (Renderer::GetHeight() - panelHeight) / 2;
-    float buttonPadding = Style::SmallMargin;
-    
-    Renderer::Fill(Color::Dark);
-    Renderer::Stroke(Color::Middle);
-    Renderer::StrokeWeight(5);
-    Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
-    
-    float textHeight;
-    UI::TextSize("Menu", nullptr, &textHeight, 1.2f);
-    UI::Text("Menu", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
-    
-    
-    float btnWidth = 200, btnHeight = 100;
-    float cx = Renderer::GetWidth() / 2;
-    float cy = Renderer::GetHeight() / 2;
-    float lx = cx - (Style::SmallMargin + btnWidth) / 2;
-    float rx = cx + (Style::SmallMargin + btnWidth) / 2;
-    float ty = cy - (Style::SmallMargin + btnHeight) / 2;
-    float by = cy + (Style::SmallMargin + btnHeight) / 2;
-    
-    if (UI::Button("Help", lx, by, btnWidth, btnHeight, Style::SmallScale))
-      SceneStack::PushScene("help");
-    if (UI::Button("Reset", rx, by, btnWidth, btnHeight, Style::SmallScale))
-      SceneStack::Reload();
-    if (UI::Button("Home", lx, ty, btnWidth, btnHeight, Style::SmallScale))
-      SceneStack::ClearStack();
-    if (UI::Button("Settings", rx, ty, btnWidth, btnHeight, Style::SmallScale))
-      SceneStack::PushScene("settings");
-    
-    if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
-    {
-      m_Menu = false;
-    }
+  	x = Renderer::GetWidth() / 2;
+  	y = (Renderer::GetHeight() / 2 + 750) - (Style::TileSize + Style::SmallMargin);
+  	UI::TiledText(m_TargetWord, x, y);
   }
-  
+    
+  // Draw menu controls
+  {
+  	constexpr float btnWidth = 200, btnHeight = 100;
+  	float width = Renderer::GetWidth();
+  	bool shouldOpenMenu = UI::Button("Menu",
+  	                                 width - (btnWidth / 2 + Style::SmallMargin), // Button x (center)
+  	                                 (btnHeight / 2) + Style::SmallMargin, // Button y (center)
+  	                                 btnWidth,
+  	                                 btnHeight,
+  	                                 Style::SmallScale);
+  	
+  	if ((shouldOpenMenu || m_MenuIsOpen) && !m_Won) // Don't open the menu if we won.
+  	{
+  	  m_MenuIsOpen = true;
+  	  ShowMenu();
+  	}
+  }
+    
   // Win Screen
   if (m_Won)
   {
@@ -240,9 +187,9 @@ void LevelScene::NextLevel()
 
 void LevelScene::KeyDown(SDL_Keycode key)
 {
-  if (m_Menu)
+  if (m_MenuIsOpen)
   {
-    m_Menu = false;
+    m_MenuIsOpen = false;
     Mixer::Pop();
     return;
   }
@@ -336,6 +283,46 @@ void LevelScene::Reset()
 {
   for (auto& s : s_CompleteScores)
     s = 0;
+}
+
+void LevelScene::ShowMenu()
+{
+    float panelWidth = 1000;
+    float panelHeight = 800;
+    float panelX = (Renderer::GetWidth() - panelWidth) / 2;
+    float panelY = (Renderer::GetHeight() - panelHeight) / 2;
+    float buttonPadding = Style::SmallMargin;
+    
+    Renderer::Fill(Color::Dark);
+    Renderer::Stroke(Color::Middle);
+    Renderer::StrokeWeight(5);
+    Renderer::Rect(panelX, panelY, panelWidth, panelHeight);
+    
+    float textHeight;
+    UI::TextSize("Menu", nullptr, &textHeight, 1.2f);
+    UI::Text("Menu", Renderer::GetWidth() / 2, panelY + 100 + textHeight / 2, 1.0f);
+    
+    float btnWidth = 200, btnHeight = 100;
+    float cx = Renderer::GetWidth() / 2;
+    float cy = Renderer::GetHeight() / 2;
+    float lx = cx - (Style::SmallMargin + btnWidth) / 2;
+    float rx = cx + (Style::SmallMargin + btnWidth) / 2;
+    float ty = cy - (Style::SmallMargin + btnHeight) / 2;
+    float by = cy + (Style::SmallMargin + btnHeight) / 2;
+    
+    if (UI::Button("Help", lx, by, btnWidth, btnHeight, Style::SmallScale))
+      SceneStack::PushScene("help");
+    if (UI::Button("Reset", rx, by, btnWidth, btnHeight, Style::SmallScale))
+      SceneStack::Reload();
+    if (UI::Button("Home", lx, ty, btnWidth, btnHeight, Style::SmallScale))
+      SceneStack::ClearStack();
+    if (UI::Button("Settings", rx, ty, btnWidth, btnHeight, Style::SmallScale))
+      SceneStack::PushScene("settings");
+    
+    if (UI::Button("Back", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
+    {
+      m_MenuIsOpen = false;
+    }
 }
 
 }

@@ -12,7 +12,6 @@ class LevelScene : public Scene
 {
 public:
   LevelScene();
-  ~LevelScene();
   
   void Load();
   void Update(float timestep);
@@ -21,7 +20,11 @@ public:
   
   static void SetLevel(int level);
   void NextLevel();
-  static void Reset();
+  
+  static void Reset(); // Reset all progress
+  
+private:
+  void ShowMenu(); // Show pause menu
   
 private:
   std::vector<std::string> m_Words;
@@ -29,7 +32,7 @@ private:
   size_t m_WordLength = 0;
   
   bool m_Won = false;
-  bool m_Menu = false;
+  bool m_MenuIsOpen = false;
   bool m_AllComplete = false;
   static int s_Level;
   

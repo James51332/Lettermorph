@@ -18,8 +18,8 @@ void HelpScene::Update(float timestep)
   if (UI::Button("Back", Renderer::GetWidth() / 2, y + 100, false))
     SceneStack::PopScene();
   
-  float panelWidth = 800;
-  float panelHeight = 600;
+  float panelWidth = 1000;
+  float panelHeight = 800;
   float panelX = (Renderer::GetWidth() - panelWidth) / 2;
   float panelY = (Renderer::GetHeight() - panelHeight) / 2;
   Renderer::Fill(Color::Dark);
