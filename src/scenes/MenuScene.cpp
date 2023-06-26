@@ -11,14 +11,6 @@
 namespace ltrm
 {
 
-void MenuScene::Load()
-{
-}
-
-void MenuScene::Unload()
-{
-}
-
 void MenuScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);

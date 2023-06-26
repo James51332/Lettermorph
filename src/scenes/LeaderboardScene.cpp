@@ -65,14 +65,6 @@ LeaderboardScene::~LeaderboardScene()
   SDL_RWclose(m_Leaderboard);
 }
 
-void LeaderboardScene::Load()
-{
-}
-
-void LeaderboardScene::Unload()
-{
-}
-
 void LeaderboardScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);
@@ -83,7 +75,7 @@ void LeaderboardScene::Update(float timestep)
   {
     pulseTime = 0;
     UI::PulseTiles();
-  }  
+  }
   UI::TiledText(std::string("LEADERBOARD"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
   
   float y = Renderer::GetHeight() / 2 + 2 * (150 + Style::SmallMargin);

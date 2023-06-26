@@ -10,8 +10,6 @@ namespace ltrm
 class SelectionScene : public Scene
 {
 public:  
-  void Load();
-  void Unload();
   void Update(float timestep);
 };
 

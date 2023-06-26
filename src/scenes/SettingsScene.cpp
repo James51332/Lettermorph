@@ -8,14 +8,6 @@
 namespace ltrm
 {
 
-void SettingsScene::Load()
-{
-}
-
-void SettingsScene::Unload()
-{
-}
-
 void SettingsScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);

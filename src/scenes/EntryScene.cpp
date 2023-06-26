@@ -12,16 +12,6 @@ namespace ltrm
 
 int EntryScene::s_Score = 0;
 
-void EntryScene::Load()
-{
-  
-}
-
-void EntryScene::Unload()
-{
-  
-}
-
 void EntryScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);

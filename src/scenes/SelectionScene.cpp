@@ -11,14 +11,6 @@
 namespace ltrm
 {
 
-void SelectionScene::Load()
-{
-}
-
-void SelectionScene::Unload()
-{
-}
-
 void SelectionScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);

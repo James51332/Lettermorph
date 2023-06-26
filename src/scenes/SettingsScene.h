@@ -10,8 +10,6 @@ namespace ltrm
 class SettingsScene : public Scene
 {
 public:  
-  void Load();
-  void Unload();
   void Update(float timestep);
   
 private:

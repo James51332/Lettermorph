@@ -18,9 +18,9 @@ class Scene
 public:
   virtual ~Scene() = default;
   
-  virtual void Load() = 0;
+  virtual void Load() {}
+  virtual void Unload() {}
   virtual void Update(float timestep) = 0;
-  virtual void Unload() = 0;
   
   // This function doesn't need to be overriden
   virtual void KeyDown(SDL_Keycode key) {}

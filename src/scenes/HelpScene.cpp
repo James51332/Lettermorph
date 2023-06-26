@@ -10,15 +10,6 @@ namespace ltrm
 static constexpr const char* helpText =
 R"(The goal of Lettermorph is to connect one word that is given to another by changing only one letter at a time, with each change resulting in a valid English word. For example, if the target is BOT and the start is CAR, the player could go CAR to CAT to COT to BOT.)";
 
-void HelpScene::Load()
-{
-}
-
-void HelpScene::Unload()
-{
-  
-}
-
 void HelpScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);

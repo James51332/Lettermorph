@@ -10,8 +10,6 @@ namespace ltrm
 class EntryScene : public Scene
 {
 public:
-  void Load();
-  void Unload();
   void Update(float timestep);
   void KeyDown(SDL_Keycode key);
   

@@ -24,8 +24,6 @@ public:
   LeaderboardScene();
   ~LeaderboardScene();
   
-  void Load();
-  void Unload();
   void Update(float timestep);
   
   static void AddEntry(const std::string& name, int score);
