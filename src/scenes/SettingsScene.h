@@ -15,7 +15,6 @@ public:
   void Update(float timestep);
   
 private:
-  float m_PulseTime = 0;
   float m_MusicVolume = 100, m_FXVolume = 100;
 };
 

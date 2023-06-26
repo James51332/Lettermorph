@@ -5,6 +5,7 @@
 namespace ltrm
 {
 
+// Various style info that is used in the UI to ensure consistency.
 struct Color
 {
   constexpr static SDL_Color Light = { 0xeb, 0xeb, 0xeb, 0xff };

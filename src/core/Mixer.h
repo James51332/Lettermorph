@@ -11,6 +11,7 @@ public:
   static void Init();
   static void Shutdown();
   
+  // Various Sound FX that the app can play.
   static void Pop();
   static void Click();
   static void Win();

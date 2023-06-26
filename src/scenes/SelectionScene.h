@@ -13,9 +13,6 @@ public:
   void Load();
   void Unload();
   void Update(float timestep);
-  
-private:
-  float m_PulseTime = 0;
 };
 
 }

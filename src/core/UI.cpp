@@ -218,21 +218,23 @@ void UI::TiledText(const std::string& word, float x, float y, int pulseType, siz
     size = word.length();
   }
   
+  // Setup Render Settings for all tiles
+  Renderer::NoStroke();
+  Renderer::Fill(Color::Dark);
+  
   for (int i = 0; i < size; i++)
   {
-    float centerX = x + Style::TileSize / 2;
-    float centerY = y + Style::TileSize / 2;
+    float letterSize, pulseValue;
+    bool shouldPulse = (pulseType == 2) || (pulseType == 1 && i == word.length() - 1); // Pulse if we pulse all tiles
     
-    Renderer::NoStroke();
-    Renderer::Fill(Color::Dark);
-    
-    float letterSize, pulse;
-    if (pulseType == 2 || (pulseType == 1 && i == word.length() - 1))
+    if (shouldPulse)
     {
-      size_t pulseIndex = pulseType == 1 ? 0 : i;
-      pulse = Animator::QueryAnimation(s_PulseAnimations[pulseIndex]).Value;
-      letterSize = Style::LetterSize + pulse;
-    	Renderer::Rect(x - pulse / 2, y - pulse / 2, Style::TileSize + pulse, Style::TileSize + pulse);
+      // We use multiple animations for the various tiles. This fetches the correct animation for the tile.
+      size_t pulseIndex = (pulseType == 1) ? 0 : i; // 1st element if only tile. nth if sequential.
+      pulseValue = Animator::QueryAnimation(s_PulseAnimations[pulseIndex]).Value;
+      
+      letterSize = Style::LetterSize + pulseValue;
+      Renderer::Rect(x - pulseValue / 2, y - pulseValue / 2, Style::TileSize + pulseValue, Style::TileSize + pulseValue);
     }
     else
     {
@@ -243,7 +245,7 @@ void UI::TiledText(const std::string& word, float x, float y, int pulseType, siz
     if (i < word.length())
     {
       char c = word[i];
-      Renderer::Letter(c, centerX - letterSize / 2, centerY - letterSize / 2, letterSize);
+      Renderer::Letter(c, x + Style::TileSize/2 - letterSize / 2, y + Style::TileSize/2 - letterSize / 2, letterSize);
     }
     
     x += Style::TileSize + Style::SmallMargin;

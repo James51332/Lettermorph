@@ -31,8 +31,6 @@ public:
   static void AddEntry(const std::string& name, int score);
   
 private:
-  float m_PulseTime = 0;
-  
   SDL_RWops* m_Leaderboard;
   static std::list<Entry> s_Entries;
 };

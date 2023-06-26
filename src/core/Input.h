@@ -27,6 +27,7 @@ public:
   static bool KeyRelease(SDL_Keycode key) { return !s_Keys[key] && s_KeysLast[key]; }
   
 private:
+  // Helper functions called by window to update state.
   static void SetMousePos(float x, float y);
   static void SetMouseDown(SDL_MouseID btn);
   static void SetMouseUp(SDL_MouseID btn);

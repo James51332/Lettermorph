@@ -34,16 +34,25 @@ public:
   // 0 => Don't pulse
   // 1 => Pulse last tile
   // 1 => Pulse all tiles along word
+  
+  // Sizing:
+  // If size == 0, the word is centered horitzontally and vertically around (x, y)
+  // If size != 0, the word is left aligned and centered vertically around (x, y)
   static void TiledText(const std::string&, float, float, int pulseType = 0, size_t size = 0);
   
   static void PulseLastTile();
   static void PulseTiles(float delay = 0.0f);
   
+  // Helper functions that calculate the size of text
   static void TextSize(const char*, float*, float*, float scale);
   static float TiledTextWidth(size_t length);
   static void ButtonSize(const char*, float*, float*, bool large);
   
 private:
+  // Whenever text is generated, a texture is created that stores the image.
+  // Since UI is static, we can cache these textures and reuse from frame to frame.
+  // This is accomplished with a hash table using std::string (of text) as the key.
+  // While not the most efficient, it is convenient for the user.
   struct TextTexture
   {
     Texture* Texture = nullptr;

@@ -20,12 +20,12 @@ void SettingsScene::Update(float timestep)
 {
   Renderer::Clear(Color::Accent);
   
-  // If more than three seconds on the scene have passed, we should pulse and reset wait
-  m_PulseTime += timestep;
-  if (m_PulseTime >= 3.0f)
+  static float pulseTime = 0;
+  pulseTime += timestep;
+  if (pulseTime >= 3.0f)
   {
-    m_PulseTime = 0.0f;
-  	UI::PulseTiles();
+    pulseTime = 0;
+    UI::PulseTiles();
   }
   UI::TiledText(std::string("Settings"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
   

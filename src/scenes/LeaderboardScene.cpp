@@ -28,7 +28,6 @@ LeaderboardScene::LeaderboardScene()
   SDL_RWread(m_Leaderboard, &buf[0], size);
   std::istringstream data(buf);
   
-  
   std::string token;
   std::string name;
   int score;
@@ -76,14 +75,15 @@ void LeaderboardScene::Unload()
 
 void LeaderboardScene::Update(float timestep)
 {
-  m_PulseTime += timestep;
-  if (m_PulseTime >= 3.0f)
-  {
-    m_PulseTime = 0;
-    UI::PulseTiles();
-  }
-  
   Renderer::Clear(Color::Accent);
+
+  static float pulseTime = 0;
+  pulseTime += timestep;
+  if (pulseTime >= 3.0f)
+  {
+    pulseTime = 0;
+    UI::PulseTiles();
+  }  
   UI::TiledText(std::string("LEADERBOARD"), Renderer::GetWidth() / 2, Style::SmallMargin + Style::TileSize / 2, 2);
   
   float y = Renderer::GetHeight() / 2 + 2 * (150 + Style::SmallMargin);

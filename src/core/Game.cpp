@@ -28,6 +28,7 @@ Game* Game::s_Instance = nullptr;
 
 Game::Game()
 {
+  // This class is a singleton
   SDL_assert(!s_Instance);
   s_Instance = this;
 }
@@ -82,7 +83,7 @@ void Game::Init()
   desc.fullscreen = true;
   m_Window = new Window(desc);
   
-  // Scene Manager
+  // Scene Manager (create and add all scenes)
   SceneStack::Init(new MenuScene(), "main");
   SceneStack::AddScene(new SelectionScene(), "selection");
   SceneStack::AddScene(new LevelScene(), "level");
@@ -97,11 +98,14 @@ void Game::Shutdown()
   // Deinitialize
   delete m_Window;
   
+  // Shutdown application processes
   SceneStack::Shutdown();
   Dictionary::Shutdown();
   UI::Shutdown();
   Mixer::Shutdown();
   Animator::Shutdown();
+  
+  // Deinit SDL libraries
   Mix_Quit();
   TTF_Quit();
   IMG_Quit();
@@ -120,15 +124,21 @@ void Game::Run()
   {
     m_Window->PollEvents();
     
+    // Update and recalculate timestep in seconds
     float timestep = (SDL_GetTicks() - lastTime) / 1000.0f;
     lastTime = SDL_GetTicks();
+    
+    // Progress all animations by the amount of time that has passed.
     Animator::Update(timestep);
     
     UI::BeginFrame();
+    
+    // Update each layer in the scene stack that is passed.
     SceneStack::Update(timestep);
+    
     UI::EndFrame();
     
-    m_Window->SwapBuffers();
+    m_Window->SwapBuffers(); // Present
   }
   
   Shutdown();
