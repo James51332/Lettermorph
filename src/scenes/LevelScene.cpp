@@ -22,7 +22,7 @@ std::vector<int> LevelScene::s_CompleteScores;
 bool LevelScene::s_TutorialMode = false;
 
 static const char* tutorialText1 =
-R"(In this level, the starting word at the top is HOPE, and The goal word at the bottom is CAKE. One word has already been typed to help us out! The next word should change the O or the P to get us closer to our target. Type the new word and click enter!)";
+R"(In this level, the starting word at the top is HOPE, and The goal word at the bottom is CAKE. One word has already been typed to help us out! The next word should change the O or the P to get us closer to our target. Type the new word and press enter! Then, solve the puzzle by entering the goal word!)";
 
 LevelScene::LevelScene()
 {
@@ -225,16 +225,6 @@ void LevelScene::KeyDown(SDL_Keycode key)
   if (m_PromptTutorial)
   {
     Mixer::Pop();
-    return;
-  }
-  
-  if (m_Won)
-  {
-    if (key == SDLK_RETURN)
-    {
-      NextLevel();
-      Mixer::Pop();
-    }
     return;
   }
   

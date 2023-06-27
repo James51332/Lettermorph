@@ -315,7 +315,7 @@ void UI::PulseTiles(float delay)
 
 bool UI::InfoPanel(const char* title, const char *text, const char* btnText)
 {
-  constexpr float width = 1100, height = 500;
+  constexpr float width = 1100, height = 550;
   float cx = (Renderer::GetWidth() / 2), cy = (Renderer::GetHeight() / 2);
   
   float lx = cx - width / 2;
