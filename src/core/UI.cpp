@@ -199,7 +199,7 @@ void UI::Text(const char* text, float x, float y, float scale)
   Renderer::Image(textTexture->Texture, x - sw/2, y - sh/2, sw, sh);
 }
 
-void UI::WrappedText(const char* text, float x, float y, uint32_t wrap, float scale)
+void UI::WrappedText(const char* text, float x, float y, uint32_t wrap, float scale, bool vertCenter)
 {
   TextTexture* textTexture;
   
@@ -226,7 +226,8 @@ void UI::WrappedText(const char* text, float x, float y, uint32_t wrap, float sc
   
   float sw = textTexture->Width * scale;
   float sh = textTexture->Height * scale;
-  Renderer::Image(textTexture->Texture, x - sw/2, y - sh/2, sw, sh);
+  if (vertCenter) y -= sh/2;
+  Renderer::Image(textTexture->Texture, x - sw/2, y, sw, sh);
 }
 
 void UI::TiledText(const std::string& word, float x, float y, int pulseType, size_t size)
@@ -310,6 +311,43 @@ void UI::PulseTiles(float delay)
     Animator::QueueAnimationActive(id, delay);
     delay += 0.08f;
   }
+}
+
+bool UI::InfoPanel(const char* title, const char *text, const char* btnText)
+{
+  constexpr float width = 1100, height = 500;
+  float cx = (Renderer::GetWidth() / 2), cy = (Renderer::GetHeight() / 2);
+  
+  float lx = cx - width / 2;
+  float topY = cy - height / 2;
+  float bottomY = cy + height / 2;
+  
+  // Draw the panel
+  Renderer::Fill(Color::Dark);
+  Renderer::Stroke(Color::Middle);
+  Renderer::StrokeWeight(5);
+  Renderer::Rect(lx, topY, width, height);
+  
+  topY += Style::LargePadding.y; // Move the top Y down.
+  
+  // Draw the title
+  float titleHeight, scale = 1.0f;
+  UI::TextSize(title, nullptr, &titleHeight, scale);
+  UI::Text(title, cx, topY + titleHeight / 2, scale);
+  topY += titleHeight;
+  
+  topY += Style::SmallMargin;
+  
+  // Draw the text
+  float textScale = 0.5f;
+  UI::WrappedText(text, cx, topY, width - 2 * Style::SmallMargin, textScale);
+  
+  // Draw the button
+  float btnHeight;
+  UI::ButtonSize(btnText, nullptr, &btnHeight, false);
+  bool enter = Input::KeyPress(SDLK_RETURN);
+  if (enter) Mixer::Click(); // Button sound via enter
+  return UI::Button(btnText, cx, bottomY - Style::SmallMargin - btnHeight /  2, false) || enter;
 }
 
 void UI::TextSize(const char* text, float* w, float* h, float scale)

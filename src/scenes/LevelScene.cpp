@@ -19,6 +19,10 @@ namespace ltrm
 
 int LevelScene::s_Level = 1;
 std::vector<int> LevelScene::s_CompleteScores;
+bool LevelScene::s_TutorialMode = false;
+
+static const char* tutorialText1 =
+R"(In this level, the starting word at the top is HOPE, and The goal word at the bottom is CAKE. One word has already been typed to help us out! The next word should change the O or the P to get us closer to our target. Type the new word and click enter!)";
 
 LevelScene::LevelScene()
 {
@@ -46,29 +50,46 @@ LevelScene::LevelScene()
 
 void LevelScene::SetLevel(int level)
 {
-  SDL_assert(level >= 1 || level <= numLevels);
+  SDL_assert(level >= 0 || level <= numLevels);
+  s_TutorialMode = (level == 0);
   s_Level = level;
 }
 
 void LevelScene::Load()
 {
-  std::string levelString = levels[s_Level - 1];
-  
-  const char* delim = "-";
-  char* token = strtok(&levelString[0], delim);
-  m_TargetWord = std::string(token);
-  m_WordLength = m_TargetWord.length();
-  
-  token = strtok(nullptr, delim);
-  while (token != nullptr)
+  // Tutorial Mode
+	if (s_TutorialMode)
   {
-    m_Words.push_back(std::string(token));
-    token = strtok(nullptr, delim);
+    m_TargetWord = "CAKE";
+    m_WordLength = 4;
+    m_Words.push_back("HOPE");
+    m_Words.push_back("COPE");
+    
+    m_PromptTutorial = true;
+  } else
+  {
+  	std::string levelString = levels[s_Level - 1];
+  	
+  	const char* delim = "-";
+  	char* token = strtok(&levelString[0], delim);
+  	m_TargetWord = std::string(token);
+  	m_WordLength = m_TargetWord.length();
+  	
+  	token = strtok(nullptr, delim);
+  	while (token != nullptr)
+  	{
+  	  m_Words.push_back(std::string(token));
+  	  token = strtok(nullptr, delim);
+  	}
+  	
+  	m_MenuIsOpen = false;
+  	m_PromptTutorial = false;
   }
+  
   m_Words.push_back(std::string());
   
-  m_ScrollOffset = 0;
   m_MenuIsOpen = false;
+  m_ScrollOffset = 0;
 }
 
 void LevelScene::Update(float timestep)
@@ -106,7 +127,11 @@ void LevelScene::Update(float timestep)
   	y = (Renderer::GetHeight() / 2 + 750) - (Style::TileSize + Style::SmallMargin);
   	UI::TiledText(m_TargetWord, x, y);
   }
-    
+   
+  // Draw tutorial
+  if (s_TutorialMode && m_PromptTutorial)
+    m_PromptTutorial = !(UI::InfoPanel("Tutorial Level", tutorialText1, "Play"));
+  
   // Draw menu controls
   {
   	constexpr float btnWidth = 200, btnHeight = 100;
@@ -148,14 +173,17 @@ void LevelScene::Update(float timestep)
     UI::Text(score.c_str(), Renderer::GetWidth() / 2, panelY + 200 + textHeight / 2, 0.7f);
     
     float btnWidth = 200, btnHeight = 100;
-    if (UI::Button("Back", Renderer::GetWidth() / 2 - Style::SmallMargin / 2 - btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
+    if (!s_TutorialMode)
     {
-      SceneStack::PopScene();
-    }
-    
-    if (UI::Button("Next", Renderer::GetWidth() / 2 + Style::SmallMargin / 2 + btnWidth / 2, panelY + panelHeight - buttonPadding - btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
+    	if (UI::Button("Back", Renderer::GetWidth() / 2 - Style::SmallMargin / 2 - btnWidth / 2, panelY + panelHeight - buttonPadding - 	btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
+    	  SceneStack::PopScene();
+    	
+    	if (UI::Button("Next", Renderer::GetWidth() / 2 + Style::SmallMargin / 2 + btnWidth / 2, panelY + panelHeight - buttonPadding - 	btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
+      	NextLevel();
+    } else
     {
-      NextLevel();
+      if (UI::Button("Home", Renderer::GetWidth() / 2, panelY + panelHeight - buttonPadding -btnHeight / 2, btnWidth, btnHeight, Style::SmallScale))
+        SceneStack::ClearStack();
     }
   }
 }
@@ -190,6 +218,12 @@ void LevelScene::KeyDown(SDL_Keycode key)
   if (m_MenuIsOpen)
   {
     m_MenuIsOpen = false;
+    Mixer::Pop();
+    return;
+  }
+  
+  if (m_PromptTutorial)
+  {
     Mixer::Pop();
     return;
   }

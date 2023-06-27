@@ -34,7 +34,10 @@ private:
   bool m_Won = false;
   bool m_MenuIsOpen = false;
   bool m_AllComplete = false;
+  
   static int s_Level;
+  static bool s_TutorialMode;
+  bool m_PromptTutorial = false;
   
   int m_ShakeAnimation;
   

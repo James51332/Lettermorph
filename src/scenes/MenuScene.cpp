@@ -36,7 +36,7 @@ void MenuScene::Update(float timestep)
   if (UI::Button("Settings", rx, cy, smallBtnWidth, btnHeight, scale))
     SceneStack::PushScene("settings");
   
-  if (UI::Button("Help", lx, cy + Style::SmallMargin + btnHeight, smallBtnWidth, btnHeight, scale))
+  if (UI::Button("Tutorial", lx, cy + Style::SmallMargin + btnHeight, smallBtnWidth, btnHeight, scale))
     SceneStack::PushScene("help");
   
   if (UI::Button("Quit", rx, cy + Style::SmallMargin + btnHeight, smallBtnWidth, btnHeight, scale))

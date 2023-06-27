@@ -28,7 +28,7 @@ public:
   static bool Slider(float x, float y, float w, float h, float lower, float upper, float& value);
   
   static void Text(const char*, float, float, float scale);
-  static void WrappedText(const char*, float, float, uint32_t, float scale);
+  static void WrappedText(const char*, float, float, uint32_t, float scale, bool vertCenter = false);
   
   // Pulse Types:
   // 0 => Don't pulse
@@ -44,6 +44,9 @@ public:
   
   static void PulseLastTile();
   static void PulseTiles(float delay = 0.0f);
+  
+  // Panel that displays text and returns true when closed.
+  static bool InfoPanel(const char* title, const char* text, const char* buttonText);
   
   // Helper functions that calculate the size of text
   static void TextSize(const char*, float*, float*, float scale);
