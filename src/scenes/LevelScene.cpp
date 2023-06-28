@@ -215,6 +215,15 @@ void LevelScene::NextLevel()
 
 void LevelScene::KeyDown(SDL_Keycode key)
 {
+  if (m_Won && key == SDLK_RETURN)
+  {
+    if (s_TutorialMode)
+      SceneStack::ClearStack();
+    else
+      NextLevel();
+    return;
+  }
+  
   if (m_MenuIsOpen)
   {
     m_MenuIsOpen = false;

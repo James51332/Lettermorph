@@ -111,7 +111,7 @@ void LeaderboardScene::AddEntry(const std::string &name, int score)
   {
     if (entry.Name == name)
     {
-      entry.Score = (entry.Score < score) ? entry.Score : score;
+      entry.Score = (entry.Score < score) ? entry.Score : score; // If player already exists, update their score.
       return;
     }
     
