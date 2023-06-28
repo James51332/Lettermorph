@@ -287,6 +287,9 @@ void LevelScene::KeyDown(SDL_Keycode key)
       UI::PulseTiles(0.25f);
       Mixer::Win();
       m_Won = true;
+      
+      if (s_TutorialMode) return;
+      
       s_CompleteScores[s_Level - 1] = static_cast<int>(m_Words.size());
       
       m_AllComplete = true;
